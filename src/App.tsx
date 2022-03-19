@@ -31,5 +31,9 @@ export default App
 // 02、react-router-dom@5.3.0路由重定向的两种使用方式
 // 02、方式1 `<Redirect exact from='/aaa' to='/xxx'></Redirect>`
 // 02、方式2 `<Route exact path='/aaa' render={()=>(<Redirect to='/xxx'></Redirect>)}></Route>`
+
 // N1、Redirect的from属性生效的前提是，该组件嵌套在Switch组件内
 // N1、Redirect组件中的from属性脱离Switch组件包裹后不会生效，此时相当于from='*'
+// N2、404路由必须放置在正常路由的末尾
+// N3、以及路由必须嵌套在Router内部，包括一级路由的锚点跳转组件NavLink以及Link
+// N4、Switch组件嵌套下的路由在path匹配成功时只能显示一个

@@ -1,11 +1,11 @@
 import React from 'react'
 
-const Home = () => {
+const Layout = () => {
   return (
     <div>
-      首页
+      Layout
     </div>
   )
 }
 
-export default Home
+export default Layout
