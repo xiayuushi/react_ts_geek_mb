@@ -8,3 +8,24 @@ body,
 #root {
   height: 100%;
 }
+
+
+// 自定义主题色
+// 01、之所以采用两个':root'是为了让我们自己写的自定义主题色覆盖antd默认的主题色
+// 02、antd的默认主题色也是使用':root'来定义的，因此当我们需要覆盖antd的默认主题色时，直接使用两个':root'可以提升优先级对antd默认主题色进行覆盖
+// 03、默认情况下我们定义的样式是会被antd给覆盖掉的，因为在使用antd组件时是后导入的，因此会覆盖我们自己写的样式
+// 03、但是，当使用连续两个':root'来定义自定义主题色时，就能够通过优先级覆盖掉antd默认的主题色
+// 04、下方`--xxx`是原生CSS的变量，定义时`--xxx: 值`，使用时`var(--xxx)`
+
+:root:root {
+  --adm-color-primary: #fc6627;
+  --adm-color-success: #00b578;
+  --adm-color-warning: #ff8f1f;
+  --adm-color-danger: #ff3141;
+  --adm-color-white: #ffffff;
+  --adm-color-weak: #999999;
+  --adm-color-light: #cccccc;
+  --adm-border-color: #eeeeee;
+  --adm-font-size-main: 13px;
+  --adm-color-text: #333333;
+}
