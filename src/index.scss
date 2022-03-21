@@ -30,6 +30,24 @@ body,
   --adm-color-text: #333333;
 }
 
+
+// iconfont彩色字体图标通用样式（symbol使用方式）
+// 彩色字体图标的使用（symbol方式引用流程）
+// st1、在public/index.html中使用script标签引入iconfont的彩色字体图标
+// st2、在项目全局通用样式src/index.scss中，设置iconfont字体通用css的icon类（具体参考下方`.icon`）
+// st3、回到组件中以svg标签的方式使用字体图标（此时可以进行组件封装以便复用及更加符合项目业务要求）
+// 例如：`<svg className="icon" aria-hidden="true"><use xlinkHref="#icon-xxx"></use></svg>`
+// iconfont字体图标symbol使用方式参考：https://www.iconfont.cn/help/detail?spm=a313x.7781069.1998910419.d8cf4382a&helptype=code
+// N1、彩色字体图标只能采用symbol的方式进行引用，其他两种使用方式（unicode与font-class）会自动去色
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+
+
 // 移动端适配方案
 // 方案1：rem + CSS媒体查询设置根元素的fontSize
 // 方案2：rem + `amfe-flexible`+设置根元素的fontSize 

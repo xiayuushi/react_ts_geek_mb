@@ -17,7 +17,7 @@ const App = () => {
           <Route component={NotFound}></Route>
         </Switch>
       </Router>
-    </div>
+    </div >
   )
 }
 
