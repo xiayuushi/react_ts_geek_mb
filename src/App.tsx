@@ -3,12 +3,10 @@ import './App.scss'
 import Login from './pages/Login'
 import Layout from './pages/Layout'
 import NotFound from './pages/NotFound'
-import Icon from '@components/Icon'
 
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 
 const App = () => {
-  const onClick = () => console.log(1234)
   return (
     <div className='app'>
       <Router>

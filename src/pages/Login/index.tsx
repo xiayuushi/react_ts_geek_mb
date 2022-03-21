@@ -1,20 +1,19 @@
 import React from 'react'
 import { NavBar, Form, Input, Button, List } from 'antd-mobile'
 import { useHistory } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import styles from './index.module.scss'
-
-type LoginParamsType = {
-  mobile: string,
-  code: string
-}
-
+import { LoginParamsType } from '@/types/data'
+import { login } from '@store/actions/login'
 const Login = () => {
   const history = useHistory()
+  const dispatch = useDispatch()
   const back = () => {
     history.go(-1)
   }
   const onFinish = (values: LoginParamsType) => {
-    console.log(values)
+    // console.log(values)
+    dispatch(login(values))
   }
   return (
     <div className={styles['root']}>

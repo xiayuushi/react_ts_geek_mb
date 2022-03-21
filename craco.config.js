@@ -7,7 +7,6 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, 'src'),
       '@pages': path.resolve(__dirname, 'src', 'pages'),
-      '@types': path.resolve(__dirname, 'src', 'types'),
       '@store': path.resolve(__dirname, 'src', 'store'),
       '@utils': path.resolve(__dirname, 'src', 'utils'),
       '@styles': path.resolve(__dirname, 'src', 'styles'),
@@ -31,6 +30,7 @@ module.exports = {
 
 // N1、项目配置文件更新后必须重启项目才会生效
 // N2、配置完别名后未配置vscode路径识别，重启项目后可能会报错找不到xxx模块，因此建议以上4步骤完成后再重启项目进行别名使用
+// N3、类型别名不要定义`@types`，会与依赖目录中的类型声明文件冲突，因此此处并未定义`src/type`目录的别名
 
 // 使用`postcss-px-to-viewport`实现移动端vw适配的流程
 // st1、安装`postcss-px-to-viewport`（指令：yarn add -D postcss-px-to-viewport）
