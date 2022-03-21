@@ -29,3 +29,19 @@ body,
   --adm-font-size-main: 13px;
   --adm-color-text: #333333;
 }
+
+// 移动端适配方案
+// 方案1：rem + CSS媒体查询设置根元素的fontSize
+// 方案2：rem + `amfe-flexible`+设置根元素的fontSize 
+// 方案3：vw适配方案（需要借助插件`postcss-px-to-viewport`，推荐使用该方案）
+
+
+// 使用`postcss-px-to-viewport`实现移动端vw适配的流程
+// st1、安装`postcss-px-to-viewport`（指令：yarn add -D postcss-px-to-viewport）
+// st2、在craco.config.js中配置（因为react项目中配置webpack文件被隐藏，因此需要通过craco的配置文件去覆盖）
+// st2、var px2vw = require('postcss-px-to-viewport');
+// st2、module.exports = { style: { postcss: { plugins: [px2vw({viewportWidth: 375})] }}}
+// st3、后续书写CSS时直接使用px单位，px单位经过编译后会，会被转成适应视口的vw
+
+// N1、viewportWidth用于指定设计稿的宽度
+// N1、此处设置的是一倍图375宽度，测量1px就写1px会被`postcss-px-to-viewport`自动在编译后转成vw单位
