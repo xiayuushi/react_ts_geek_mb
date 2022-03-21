@@ -15,11 +15,11 @@ module.exports = {
       '@components': path.resolve(__dirname, 'src', 'components'),
     },
   },
-  style: {
-    postcss: {
-      plugins: [px2vw({ viewportWidth: 375 })],
-    },
-  },
+  // style: {
+  //   postcss: {
+  //     plugins: [px2vw({ viewportWidth: 375 })],
+  //   },
+  // },
 }
 
 // create-react-app + ts 配置路径别名流程
