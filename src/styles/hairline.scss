@@ -1,0 +1,206 @@
+// 基础边框（颜色，决定出现位置的边偏移）
+// 相当于 border
+@mixin scale-hairline-common($color, $top, $right, $bottom, $left) {
+  content: '';
+  position: absolute;
+  display: block;
+  z-index: 1;
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+  background-color: $color;
+}
+
+// 设置边框方向（四个方向任意一边或者全边框）、颜色、圆角
+// 相当于 `border: 1px solid #color`
+@mixin hairline($direction, $color: #000, $radius: 0) {
+  position: relative;
+
+  @if $direction==top {
+    border-top: 1px solid $color;
+
+    @media (-webkit-min-device-pixel-ratio: 2),
+    (min-device-pixel-ratio: 2) {
+      border-top: none;
+
+      &::before {
+        @include scale-hairline-common($color, 0, auto, auto, 0);
+        width: 100%;
+        height: 1px;
+        transform-origin: 50% 50%;
+        transform: scaleY(0.5);
+
+        @media (-webkit-min-device-pixel-ratio: 3),
+        (min-device-pixel-ratio: 3) {
+          transform: scaleY(0.33);
+        }
+      }
+    }
+  }
+
+  @else if $direction==right {
+    border-right: 1px solid $color;
+
+    @media (-webkit-min-device-pixel-ratio: 2),
+    (min-device-pixel-ratio: 2) {
+      border-right: none;
+
+      &::after {
+        @include scale-hairline-common($color, 0, 0, auto, auto);
+        width: 1px;
+        height: 100%;
+        background: $color;
+        transform-origin: 100% 50%;
+        transform: scaleX(0.5);
+
+        @media (-webkit-min-device-pixel-ratio: 3),
+        (min-device-pixel-ratio: 3) {
+          transform: scaleX(0.33);
+        }
+      }
+    }
+  }
+
+  @else if $direction==bottom {
+    border-bottom: 1px solid $color;
+
+    @media (-webkit-min-device-pixel-ratio: 2),
+    (min-device-pixel-ratio: 2) {
+      border-bottom: none;
+
+      &::after {
+        @include scale-hairline-common($color, auto, auto, 0, 0);
+        width: 100%;
+        height: 1px;
+        transform-origin: 50% 100%;
+        transform: scaleY(0.5);
+
+        @media (-webkit-min-device-pixel-ratio: 3),
+        (min-device-pixel-ratio: 3) {
+          transform: scaleY(0.33);
+        }
+      }
+    }
+  }
+
+  @else if $direction==left {
+    border-left: 1px solid $color;
+
+    @media (-webkit-min-device-pixel-ratio: 2),
+    (min-device-pixel-ratio: 2) {
+      border-left: none;
+
+      &::before {
+        @include scale-hairline-common($color, 0, auto, auto, 0);
+        width: 1px;
+        height: 100%;
+        transform-origin: 100% 50%;
+        transform: scaleX(0.5);
+
+        @media (-webkit-min-device-pixel-ratio: 3),
+        (min-device-pixel-ratio: 3) {
+          transform: scaleX(0.33);
+        }
+      }
+    }
+  }
+
+  @else if $direction==all {
+    border: 1px solid $color;
+    border-radius: $radius;
+
+    @media (-webkit-min-device-pixel-ratio: 2),
+    (min-device-pixel-ratio: 2) {
+      position: relative;
+      border: none;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 200%;
+        height: 200%;
+        border: 1px solid $color;
+        border-radius: $radius * 2;
+        transform-origin: 0 0;
+        transform: scale(0.5);
+        box-sizing: border-box;
+        pointer-events: none;
+      }
+    }
+  }
+}
+
+// 移除边框
+// 相当于原先的 `border: none`
+@mixin hairline-remove($position: all) {
+  @if $position==left {
+    border-left: 0;
+
+    &::before {
+      display: none !important;
+    }
+  }
+
+  @else if $position==right {
+    border-right: 0;
+
+    &::after {
+      display: none !important;
+    }
+  }
+
+  @else if $position==top {
+    border-top: 0;
+
+    &::before {
+      display: none !important;
+    }
+  }
+
+  @else if $position==bottom {
+    border-bottom: 0;
+
+    &::after {
+      display: none !important;
+    }
+  }
+
+  @else if $position==all {
+    border: 0;
+
+    &::before {
+      display: none !important;
+    }
+
+    &::after {
+      display: none !important;
+    }
+  }
+}
+
+
+// 当前文件用于解决移动端设备 1px 边框可能变粗的问题
+// 由于移动端设备像素比DPR的存在，导致border在不同DPR设备上显示的效果会比实际的1px更粗
+// 因此为了解决该问题，此处使用 `伪元素+transform:scale`的方式实现不同DPR相同1px的效果
+
+// 01、scss中使用`$`来定义变量，使用`@mixin`来定义函数，使用`@include来使用函数`
+// 01、在scss文件中定义名为xxx的函数：@mixin xxx($color){ color: $color; } 
+// 01、在CSS选择器中使用名为xxx的函数：div { @include xxx(#f00) }
+
+// 伪元素+transform:scale解决移动端设备像素比1px变粗的流程
+// st1、新建hairline.scss，使用伪元素+transform:scale来重新定义border（具体代码参考当前文件内容）
+// st2、在需要使用border的样式文件中，导入hairline.scss，例如：@import '~@/style/hairline.scss';
+// st3、在需要使用boder的css属性中（如，原先的`border: 4px solid #ccc;`），调用hairline.scss中定义的设置border具体属性的函数（如，@include hairline(all,#ccc)）
+// st4、在需要移除boder的css属性中（即，原先的`border: none`），调用hairline.scss中定义的移除border的函数（如，@include hairline-remove(all)）
+
+// 以上@mixin scale-hairline-common()用于设置基础border，即重写了border这个属性
+// 以上@mixin hairline()用于设置具体的border属性，即相当于`border: 1px solid #ccc'这样子的具体属性
+// 以上@mixin hairline-remove()用于移除具体的border属性，即相当于`border:none'
+// 即，在当前移动端项目中，后续使用到了border相关的css属性，都使用与其相关的hairline.scss中的函数方法
+
+// N1、@mixin hairline封装时，必须添加`position: relative;`否则重写的border绝对定位会脱标，
+// N1、导致在使用时还要额外添加'position: relative;'这样子不太好
+// N1、因此最好的做法是在封装重写border的函数@mixin hairline中添加相对定位

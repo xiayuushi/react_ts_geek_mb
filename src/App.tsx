@@ -9,7 +9,6 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 const App = () => {
   return (
     <div className='app'>
-      <span>222</span>
       <Router>
         <Switch>
           <Redirect exact from='/' to='/layout'></Redirect>
