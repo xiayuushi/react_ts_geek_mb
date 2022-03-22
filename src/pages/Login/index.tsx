@@ -5,15 +5,20 @@ import { useDispatch } from 'react-redux'
 import styles from './index.module.scss'
 import { LoginParamsType } from '@/types/data'
 import { login } from '@store/actions/login'
+import { AxiosError } from 'axios'
 const Login = () => {
   const history = useHistory()
   const dispatch = useDispatch()
   const back = () => {
     history.go(-1)
   }
-  const onFinish = (values: LoginParamsType) => {
-    // console.log(values)
-    dispatch(login(values))
+  const onFinish = async (values: LoginParamsType) => {
+    try {
+      await dispatch(login(values))
+    } catch (e) {
+      const err = e as AxiosError<{ message: string }>
+      console.log(err.response?.data.message)
+    }
   }
   return (
     <div className={styles['root']}>

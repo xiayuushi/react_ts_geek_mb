@@ -22,7 +22,7 @@ export type LoginParamsType = {
 // 02、光标移入axios方法返回数据时可看到axios自身内置的AxiosResponse类型，该类型接收泛型参数
 // 02、因此根据返回数据定义相应的数据字段类型，作为AxiosResponse类型的泛型参数传入，后续使用axios请求回来的数据时就有链式属性提示了
 
-// 自定义axios响应类型流程
+// 自定义axios请求方法的响应类型流程
 // st1、光标移入axios请求回来的数据上查看内置的AxiosResponse类型
 // st1、例如 const res = await axios.get(...)，此时光标移到res上可看到AxiosResponse类型（res返回数据的类型，即得到返回数据的方法的类型，如axios.get）
 // st2、AxiosResponse类型（发请求时得到返回数据的方法）接收两个泛型参数，只需根据res返回的数据定义相应的数据字段及对应的类型，作为AxiosResponse类型的第一个泛型参数
@@ -33,9 +33,22 @@ export type LoginParamsType = {
 // st4、在得到res返回数据的请求方法中使用AxiosResponse泛型，以及传入泛型参数
 // st4、例如：const res = await axios.get<Xxx<{具体字段1:类型, 具体字段2：类型 }>>
 
+// axios的AxiosError类型
+// 01、使用try-catch去捕获错误时，因为捕获的错误的情况很多，并非全是axios报错，catch形参e内置是any或者unknown类型且不允许显式的指定类型，因此使用形参e时不会有属性提示
+// 02、在try-catch中，也不允许直接为catch形参显示的指定类型（显式的指定为any或者unknown也不被允许）
+// 02、即 `try{...}catch(e:xxx){...}` 这种为e直接指定类型的方式都是不被允许的
+// 03、做登录请求失败的逻辑时，为了有更加明确的属性提示，可以使用类型断言将catch形参e断言为axios的AxiosError类型，以此来获取axios报错信息
+// 03、例如：`try{...}catch(e){ const xxx = e as AxiosError }` 后续就可以通过变量xxx来获取axios报错信息（此时使用xxx时有链式属性提示）
+// 04、为了有更加明确的axios错误类型提示，可以给AxiosError传入泛型参数
+// 04、泛型参数的定义可以参考以下两种方式
+// 04、方式1：断言e的类型为AxiosError之前，`console.dir(res)`查看报错信息
+// 04、方式2：断言e的类型为AxiosError之后，变量接收的返回的报错信息数据进行定义，通常是一个返回错误信息的字段，只需要定义该字段及对应的字段类型即可
+// 04、例如：`try{...}catch(e){ const xxx = e as AxiosError<{ message: string }> }` 后续通过变量xxx可以一路链式点选属性到message拿到axios报错信息
+
 
 // N1、通用的类型数据通常会被单独存放于某个.d.ts文件中，以便进行管理，随用随导
 // N2、如果响应数据的数据字段完全不一样，则可以将自定义响应类型的泛型直接放到那个请求所在的文件中，不必放到通用类型文件中
 // N3、在发请求时，为axios的请求方法提供自定义的响应类型可以获取完整的链式属性提示
 // N4、可以根据接口文档返回数据格式定义（或者调用一次接口拿到数据去定义）类型作为请求方法的泛型参数
 // N5、如果在请求前指定了响应数据类型并传入了具体的泛型参数，则在axios响应拦截器中就不要对response数据进行简化取值处理，否则在redux的action拿数据时会有问题
+// N6、登录出错的逻辑及AxiosError类型的使用，通常会在axios响应拦截器中进行统一处理，这样子可以避免在不同组件中使用try-catch处理相同的登录错误
