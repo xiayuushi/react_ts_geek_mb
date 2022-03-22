@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavBar, Form, Input, Button, List } from 'antd-mobile'
+import { NavBar, Form, Input, Button, List, Toast } from 'antd-mobile'
 import { useHistory } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import styles from './index.module.scss'
@@ -13,12 +13,8 @@ const Login = () => {
     history.go(-1)
   }
   const onFinish = async (values: LoginParamsType) => {
-    try {
-      await dispatch(login(values))
-    } catch (e) {
-      const err = e as AxiosError<{ message: string }>
-      console.log(err.response?.data.message)
-    }
+    await dispatch(login(values))
+    Toast.show({ content: '登录成功', icon: 'success', afterClose: () => { history.push('/layout') } })
   }
   return (
     <div className={styles['root']}>

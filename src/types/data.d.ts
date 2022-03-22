@@ -40,10 +40,14 @@ export type LoginParamsType = {
 // 03、做登录请求失败的逻辑时，为了有更加明确的属性提示，可以使用类型断言将catch形参e断言为axios的AxiosError类型，以此来获取axios报错信息
 // 03、例如：`try{...}catch(e){ const xxx = e as AxiosError }` 后续就可以通过变量xxx来获取axios报错信息（此时使用xxx时有链式属性提示）
 // 04、为了有更加明确的axios错误类型提示，可以给AxiosError传入泛型参数
-// 04、泛型参数的定义可以参考以下两种方式
-// 04、方式1：断言e的类型为AxiosError之前，`console.dir(res)`查看报错信息
-// 04、方式2：断言e的类型为AxiosError之后，变量接收的返回的报错信息数据进行定义，通常是一个返回错误信息的字段，只需要定义该字段及对应的字段类型即可
-// 04、例如：`try{...}catch(e){ const xxx = e as AxiosError<{ message: string }> }` 后续通过变量xxx可以一路链式点选属性到message拿到axios报错信息
+
+// 在组件try-catch逻辑中，将catch形参e断言为AxiosError类型，并为该类型传入泛型参数的两种方式
+// 01、方式1：断言e的类型为AxiosError之前，`console.dir(res)`查看报错信息
+// 02、方式2：断言e的类型为AxiosError之后，变量接收的返回的报错信息数据进行定义，通常是一个返回错误信息的字段，只需要定义该字段及对应的字段类型即可
+// 02、例如：`try{...}catch(e){ const xxx = e as AxiosError<{ message: string }> }` 后续通过变量xxx可以一路链式点选属性到message拿到axios报错信息
+
+// 在axios响应拦截器中，出错逻辑形参error的类型一定是AxiosError类型，因此以上定义泛型参数的两种方式都适用
+// 可以直接显式的为响应拦截器出错的回调形参error指定AxiosError类型，也可以使用类型断言
 
 
 // N1、通用的类型数据通常会被单独存放于某个.d.ts文件中，以便进行管理，随用随导
@@ -52,3 +56,6 @@ export type LoginParamsType = {
 // N4、可以根据接口文档返回数据格式定义（或者调用一次接口拿到数据去定义）类型作为请求方法的泛型参数
 // N5、如果在请求前指定了响应数据类型并传入了具体的泛型参数，则在axios响应拦截器中就不要对response数据进行简化取值处理，否则在redux的action拿数据时会有问题
 // N6、登录出错的逻辑及AxiosError类型的使用，通常会在axios响应拦截器中进行统一处理，这样子可以避免在不同组件中使用try-catch处理相同的登录错误
+// N7、try-catch捕获的错误情况很多，不能显式的指定类型，只能进行类型断言，断言错误为AxiosError类型（断言为AxiosError类型后，无法处理其他非axios请求的类型错误，要慎用）
+// N8、axios响应拦截器中，既可以使用类型断言，也可以显式的指定AxiosError类型，是比较推荐的做法，另外也不影响组件中再次使用try-catch捕获其他非axios请求的错误
+// N9、推荐使用axios响应拦截器中处理登录失败的请求，这样子可以避免重复在不同组件中写try-catch处理登录失败
