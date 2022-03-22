@@ -1,6 +1,7 @@
-import { LoginParamsType, ApiResponseType, TokenDataType } from '@/types/data'
 import request from '@utils/request'
+import { setToken } from '@utils/storage'
 import { RootThunkActionType } from '@/types/store'
+import { LoginParamsType, ApiResponseType, TokenDataType } from '@/types/data'
 
 export const login = (values: LoginParamsType): RootThunkActionType => {
   return async dispatch => {
@@ -11,5 +12,7 @@ export const login = (values: LoginParamsType): RootThunkActionType => {
       type: 'login/login',
       response: res.data.data
     })
+
+    setToken(res.data.data)
   }
 }

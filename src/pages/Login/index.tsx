@@ -5,17 +5,19 @@ import { useDispatch } from 'react-redux'
 import styles from './index.module.scss'
 import { LoginParamsType } from '@/types/data'
 import { login } from '@store/actions/login'
-import { AxiosError } from 'axios'
+
 const Login = () => {
   const history = useHistory()
-  const dispatch = useDispatch()
   const back = () => {
     history.go(-1)
   }
+
+  const dispatch = useDispatch()
   const onFinish = async (values: LoginParamsType) => {
     await dispatch(login(values))
     Toast.show({ content: '登录成功', icon: 'success', afterClose: () => { history.push('/layout') } })
   }
+
   return (
     <div className={styles['root']}>
       <NavBar onBack={back}></NavBar>
