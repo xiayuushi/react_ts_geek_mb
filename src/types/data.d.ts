@@ -1,6 +1,41 @@
+// axios内置的AxiosResponse的泛型参数（实参）
+// 传入给axios的get或者post或者其他请求的泛型，如axios.post<ApiResPonseType<T>>
+// 定义了两个字段，则这两个字段就会有完整的属性链式提示
+export type ApiResponseType<T> = {
+  message: string,
+  data: T
+}
+
+export type TokenDataType = {
+  token: string,
+  refresh_token: string
+}
+
 export type LoginParamsType = {
   mobile: string,
   code: string
 }
 
 // 01、当前文件用于存放除store之外的，会在多个组件中用到的数据的声明
+// 02、ApiResponseType是根据axios内置的AxiosResponse类型封装而成的自定义响应类型
+// 02、因为当前接口返回的数据都有message以及data字段，为了在通过axios拿到数据使用时能够有属性提示（定义了几个字段，这几个字段就会有属性提示）
+// 02、光标移入axios方法返回数据时可看到axios自身内置的AxiosResponse类型，该类型接收泛型参数
+// 02、因此根据返回数据定义相应的数据字段类型，作为AxiosResponse类型的泛型参数传入，后续使用axios请求回来的数据时就有链式属性提示了
+
+// 自定义axios响应类型流程
+// st1、光标移入axios请求回来的数据上查看内置的AxiosResponse类型
+// st1、例如 const res = await axios.get(...)，此时光标移到res上可看到AxiosResponse类型（res返回数据的类型，即得到返回数据的方法的类型，如axios.get）
+// st2、AxiosResponse类型（发请求时得到返回数据的方法）接收两个泛型参数，只需根据res返回的数据定义相应的数据字段及对应的类型，作为AxiosResponse类型的第一个泛型参数
+// st2、例如：axios.get<Xxx, any>  此时Xxx就是根据res返回数据定义的字段及字段类型
+// st3、观察res返回数据，如果某个字段是固定不变的数据类型，而其他字段的数据类型有所不同，则可以再次进行封装（将有不同的类型的字段定义为泛型）
+// st3、例如：当前项目所有res返回数据中都有message及data字段，且message都是字符串，而data有可能是对象有可能是数组，因此可以将data的数据类型提取为泛型
+// st3、例如：type Xxx<T> = {message: string, data: T} 后续根据具体的data的类型，将泛型参数T具体化
+// st4、在得到res返回数据的请求方法中使用AxiosResponse泛型，以及传入泛型参数
+// st4、例如：const res = await axios.get<Xxx<{具体字段1:类型, 具体字段2：类型 }>>
+
+
+// N1、通用的类型数据通常会被单独存放于某个.d.ts文件中，以便进行管理，随用随导
+// N2、如果响应数据的数据字段完全不一样，则可以将自定义响应类型的泛型直接放到那个请求所在的文件中，不必放到通用类型文件中
+// N3、在发请求时，为axios的请求方法提供自定义的响应类型可以获取完整的链式属性提示
+// N4、可以根据接口文档返回数据格式定义（或者调用一次接口拿到数据去定义）类型作为请求方法的泛型参数
+// N5、如果在请求前指定了响应数据类型并传入了具体的泛型参数，则在axios响应拦截器中就不要对response数据进行简化取值处理，否则在redux的action拿数据时会有问题

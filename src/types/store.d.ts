@@ -1,21 +1,14 @@
 import store from "@/store"
 import { ThunkAction } from 'redux-thunk'
+import { TokenDataType } from "./data"
 
 export type RootStateType = ReturnType<typeof store.getState>
 export type RootActionType = LoginActionType
 export type RootThunkActionType = ThunkAction<void, RootStateType, any, RootActionType>
 
-export type LoginStateType = {
-  token: string,
-  refresh_token: string
-}
-
 export type LoginActionType = {
   type: 'login/login',
-  response: {
-    token: string,
-    refresh_token: string
-  }
+  response: TokenDataType
 }
 
 // 01、当前文件是store相关的类型声明集合
