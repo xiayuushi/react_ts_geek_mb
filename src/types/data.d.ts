@@ -26,6 +26,15 @@ export type UserType = {
   like_count: number,
 }
 
+export type UserProfileType = {
+  birthday: string,
+  gender: number,
+  id: string,
+  mobile: string,
+  name: string,
+  photo: string
+}
+
 // 01、当前文件用于存放除store之外的，会在多个组件中用到的数据的声明
 // 02、ApiResponseType是根据axios内置的AxiosResponse类型封装而成的自定义响应类型
 // 02、因为当前接口返回的数据都有message以及data字段，为了在通过axios拿到数据使用时能够有属性提示（定义了几个字段，这几个字段就会有属性提示）

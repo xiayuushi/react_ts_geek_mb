@@ -1,13 +1,15 @@
-import { UserType } from '@/types/data.d'
+import { UserType, UserProfileType } from '@/types/data.d'
 import { ProfileActionType } from '@/types/store.d'
 
 type ProfileStateType = {
-  user: UserType
+  user: UserType,
+  userProfile: UserProfileType
 }
 
 const initState = {
-  user: {} as UserType
-}
+  user: {},
+  userProfile: {}
+} as ProfileStateType
 
 const profile = (state = initState, action: ProfileActionType): ProfileStateType => {
 
@@ -15,6 +17,12 @@ const profile = (state = initState, action: ProfileActionType): ProfileStateType
     return {
       ...state,
       user: action.response
+    }
+  }
+  if (action.type === 'profile/getUserProfile') {
+    return {
+      ...state,
+      userProfile: action.response
     }
   }
   return state

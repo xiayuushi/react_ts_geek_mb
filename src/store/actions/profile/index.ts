@@ -1,4 +1,4 @@
-import { UserType, ApiResponseType } from '@/types/data'
+import { UserType, ApiResponseType, UserProfileType } from '@/types/data'
 import request from "@utils/request"
 import { RootThunkActionType } from '@/types/store'
 
@@ -8,9 +8,18 @@ export const getUser = (): RootThunkActionType => {
       url: '/user',
       method: 'get'
     })
-    console.log(res)
     dispatch({
       type: 'profile/getUser',
+      response: res.data.data
+    })
+  }
+}
+
+export const getUserProfile = (): RootThunkActionType => {
+  return async dispatch => {
+    const res = await request.get<ApiResponseType<UserProfileType>>('/user/profile')
+    dispatch({
+      type: 'profile/getUserProfile',
       response: res.data.data
     })
   }

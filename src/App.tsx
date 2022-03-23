@@ -2,6 +2,7 @@ import React from 'react'
 import './App.scss'
 import Login from './pages/Login'
 import Layout from './pages/Layout'
+import ProfileEdit from './pages/Profile/Edit'
 import NotFound from './pages/NotFound'
 
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
@@ -14,6 +15,7 @@ const App = () => {
           <Redirect exact from='/' to='/layout'></Redirect>
           <Route path='/login' component={Login}></Route>
           <Route path='/layout' component={Layout}></Route>
+          <Route path='/profile/edit' component={ProfileEdit}></Route>
           <Route component={NotFound}></Route>
         </Switch>
       </Router>

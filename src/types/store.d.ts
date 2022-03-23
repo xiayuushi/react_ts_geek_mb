@@ -1,6 +1,6 @@
 import store from "@/store"
 import { ThunkAction } from 'redux-thunk'
-import { TokenDataType, UserType } from "./data"
+import { TokenDataType, UserType, UserProfileType } from "./data"
 
 export type RootStateType = ReturnType<typeof store.getState>
 export type RootActionType = LoginActionType | ProfileActionType
@@ -16,6 +16,9 @@ export type LoginActionType = {
 export type ProfileActionType = {
   type: 'profile/getUser',
   response: UserType
+} | {
+  type: 'profile/getUserProfile',
+  response: UserProfileType
 }
 
 // 01、当前文件是store相关的类型声明集合
