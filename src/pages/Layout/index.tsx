@@ -2,7 +2,12 @@ import React, { useState } from 'react'
 import styles from './index.module.scss'
 import { TabBar } from 'antd-mobile'
 import Icon from '@components/Icon'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory, useLocation, Switch, Route, Redirect } from 'react-router-dom'
+
+import Home from '@pages/Home'
+import Question from '@pages/Question'
+import Video from '@pages/Video'
+import Profile from '@pages/Profile'
 
 const Layout = () => {
   const tabs = [
@@ -20,6 +25,12 @@ const Layout = () => {
 
   return (
     <div className={styles['root']}>
+      <Switch>
+        <Route exact path="/layout" component={Home}></Route>
+        <Route path="/layout/qa" component={Question}></Route>
+        <Route path="/layout/video" component={Video}></Route>
+        <Route path="/layout/profile" component={Profile}></Route>
+      </Switch>
       <TabBar className='tab-bar' onChange={changeRoute} activeKey={location.pathname}>
         {tabs.map(item => (
           <TabBar.Item
