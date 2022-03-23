@@ -1,25 +1,18 @@
-import request from '@utils/request'
-import { setToken } from '@utils/storage'
+import { UserType, ApiResponseType } from '@/types/data'
+import request from "@utils/request"
 import { RootThunkActionType } from '@/types/store'
-import { LoginParamsType, ApiResponseType, TokenDataType } from '@/types/data'
 
-export const login = (values: LoginParamsType): RootThunkActionType => {
+export const getUser = (): RootThunkActionType => {
   return async dispatch => {
-    const res = await request.post<ApiResponseType<TokenDataType>>('/authorizations', values)
+    const res = await request.request<ApiResponseType<UserType>>({
+      url: '/user',
+      method: 'get'
+    })
     console.log(res)
-
     dispatch({
-      type: 'login/login',
+      type: 'profile/getUser',
       response: res.data.data
     })
-
-    setToken(res.data.data)
-  }
-}
-
-export const getCode = (mobile: string): RootThunkActionType => {
-  return async () => {
-    await request.get(`/sms/codes/${mobile}`)
   }
 }
 

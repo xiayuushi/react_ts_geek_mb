@@ -1,10 +1,15 @@
 import axios, { AxiosError } from 'axios'
 import { Toast } from 'antd-mobile'
+import { isLogin, getToken } from './storage'
 const instance = axios.create({
   baseURL: process.env.REACT_APP_URL
 })
 
 instance.interceptors.request.use(config => {
+  const { token } = getToken()
+  if (isLogin) {
+    config.headers!.Authorization = `Bearer ${token}`
+  }
   return config
 }, error => {
   return Promise.reject(error)
@@ -46,3 +51,6 @@ export default instance
 // N1、try-catch捕获的错误情况很多，不能显式的指定类型，只能进行类型断言，断言错误为AxiosError类型（断言为AxiosError类型后，无法处理其他非axios请求的类型错误，要慎用）
 // N2、axios响应拦截器中，既可以使用类型断言，也可以显式的指定AxiosError类型，是比较推荐的做法，另外也不影响组件中再次使用try-catch捕获其他非axios请求的错误
 // N3、推荐使用axios响应拦截器中处理登录失败的请求，这样子可以避免重复在不同组件中写try-catch处理登录失败
+
+// N4、对于某些需要token才能访问的页面请求，请求前需要判断是否登录，已登录则在请求头中自动携带token发送请求
+// N5、请求拦截器config配置中一定会有header对象，对于此处报错直接使用TS的非空断言规避TS类型报错
