@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Button, List, Popup, NavBar } from 'antd-mobile'
+import { Button, List, Popup, NavBar, Toast } from 'antd-mobile'
 import classNames from 'classnames'
 
 import EditInput from './EditInput'
 import styles from './index.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
-import { getUserProfile } from '@/store/actions/profile'
+import { getUserProfile, updateUserProfile } from '@/store/actions/profile'
 import { RootStateType } from '@/types/store'
 
 
@@ -28,6 +28,12 @@ const ProfileEdit = () => {
       visibile: false
     })
   }
+  const onUpdate = async (key: string, value: string) => {
+    console.log(key, value)
+    await dispatch(updateUserProfile(key, value))
+    Toast.show({ content: '修改成功', icon: 'success', afterClose: () => hidePopup() })
+  }
+
   return (
     <div className={styles.root}>
       <div className="content">
@@ -88,7 +94,7 @@ const ProfileEdit = () => {
         onMaskClick={hidePopup}
         destroyOnClose
       >
-        <EditInput hidePopup={hidePopup} type={showPopup.type}></EditInput>
+        <EditInput hidePopup={hidePopup} type={showPopup.type} onUpdate={onUpdate}></EditInput>
       </Popup>
     </div>
   )

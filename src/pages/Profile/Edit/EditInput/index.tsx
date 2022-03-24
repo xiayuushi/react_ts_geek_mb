@@ -8,10 +8,11 @@ import { InputRef } from 'antd-mobile/es/components/input'
 import { TextAreaRef } from 'antd-mobile/es/components/text-area'
 
 type PropsType = {
-  hidePopup: () => void
-  type: '' | 'name' | 'intro'
+  hidePopup: () => void,
+  onUpdate: (key: string, value: string) => void,
+  type: '' | 'name' | 'intro',
 }
-const EditInput = ({ hidePopup, type }: PropsType) => {
+const EditInput = ({ hidePopup, type, onUpdate }: PropsType) => {
   const { profile: { userProfile } } = useSelector((state: RootStateType) => state)
   const [value, setValue] = useState(type === 'name' ? userProfile.name : userProfile.intro)
 
@@ -30,7 +31,7 @@ const EditInput = ({ hidePopup, type }: PropsType) => {
     <div className={styles.root}>
       <NavBar
         className="navbar"
-        right={<span className="commit-btn">提交</span>}
+        right={<span className="commit-btn" onClick={() => onUpdate(type, value)}>提交</span>}
         onBack={hidePopup}
       >
         编辑{type === 'name' ? '昵称' : '简介'}
