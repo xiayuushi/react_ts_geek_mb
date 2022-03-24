@@ -3,6 +3,7 @@ import { Button, List, Popup, NavBar, Toast } from 'antd-mobile'
 import classNames from 'classnames'
 
 import EditInput from './EditInput'
+import EditList from './EditList'
 import styles from './index.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserProfile, updateUserProfile } from '@/store/actions/profile'
@@ -17,13 +18,22 @@ const ProfileEdit = () => {
 
   const { profile: { userProfile } } = useSelector((state: RootStateType) => state)
 
-  type PopupType = { type: '' | 'intro' | 'name', visibile: boolean }
-  const [showPopup, setShowPopup] = useState<PopupType>({
+  type EditInputType = { type: '' | 'intro' | 'name', visibile: boolean }
+  type EditListType = { type: '' | 'gender' | 'photo', visibile: boolean }
+  const [showEditInput, setShowEditInput] = useState<EditInputType>({
     type: '',
     visibile: false,
   })
+  const [showEditList, setShowEditList] = useState<EditListType>({
+    type: '',
+    visibile: false
+  })
   const hidePopup = () => {
-    setShowPopup({
+    setShowEditInput({
+      type: '',
+      visibile: false
+    })
+    setShowEditList({
       type: '',
       visibile: false
     })
@@ -45,6 +55,7 @@ const ProfileEdit = () => {
           <List className="profile-list">
             {/* 列表项 */}
             <List.Item
+              arrow
               extra={
                 <span className="avatar-wrapper">
                   <img
@@ -55,27 +66,31 @@ const ProfileEdit = () => {
                   />
                 </span>
               }
-              arrow
+              onClick={() => setShowEditList({ type: 'photo', visibile: true })}
             >
               头像
             </List.Item>
             <List.Item
               arrow
               extra={userProfile.name}
-              onClick={() => setShowPopup({ type: 'name', visibile: true })}>
+              onClick={() => setShowEditInput({ type: 'name', visibile: true })}>
               昵称
             </List.Item>
             <List.Item
               arrow
               extra={<span className={classNames('intro', userProfile.intro && 'normal')}>{userProfile.intro || '未填写'}</span>}
-              onClick={() => setShowPopup({ type: 'intro', visibile: true })}
+              onClick={() => setShowEditInput({ type: 'intro', visibile: true })}
             >
               简介
             </List.Item>
           </List>
 
           <List className="profile-list">
-            <List.Item arrow extra={userProfile.gender === 1 ? '男' : '女'}>
+            <List.Item
+              arrow
+              extra={userProfile.gender === 1 ? '男' : '女'}
+              onClick={() => setShowEditList({ type: 'gender', visibile: true })}
+            >
               性别
             </List.Item>
             <List.Item arrow extra={userProfile.birthday}>
@@ -89,15 +104,26 @@ const ProfileEdit = () => {
         </div>
       </div>
       <Popup
-        visible={showPopup.visibile}
+        visible={showEditInput.visibile}
         position="right"
         onMaskClick={hidePopup}
         destroyOnClose
       >
-        <EditInput hidePopup={hidePopup} type={showPopup.type} onUpdate={onUpdate}></EditInput>
+        <EditInput hidePopup={hidePopup} type={showEditInput.type} onUpdate={onUpdate}></EditInput>
+      </Popup>
+      <Popup
+        visible={showEditList.visibile}
+        position='bottom'
+        onMaskClick={hidePopup}
+        destroyOnClose
+      >
+        <EditList hidePopup={hidePopup} type={showEditList.type} onUpdate={onUpdate}></EditList>
       </Popup>
     </div>
   )
 }
 
 export default ProfileEdit
+
+// 01、因修改昵称与修改简介的弹出层结构、逻辑一致，因此封装EditInput组件以便复用这两种弹出层 
+// 02、因修改头像与修改性别的弹出层结构、逻辑一致，因此封装EditList组件以便复用这两种弹出层 
