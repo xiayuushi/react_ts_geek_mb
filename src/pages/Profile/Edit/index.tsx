@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Button, List, Popup, NavBar, Toast } from 'antd-mobile'
+import { Button, List, Popup, NavBar, Toast, DatePicker } from 'antd-mobile'
 import classNames from 'classnames'
-
+import dayjs from 'dayjs'
 import EditInput from './EditInput'
 import EditList from './EditList'
 import styles from './index.module.scss'
@@ -15,7 +15,7 @@ const ProfileEdit = () => {
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(getUserProfile())
-  }, [])
+  }, [dispatch])
 
   const { profile: { userProfile } } = useSelector((state: RootStateType) => state)
 
@@ -46,7 +46,8 @@ const ProfileEdit = () => {
     const fd = new FormData()
     fd.append('photo', file)
     await dispatch(updateUserPhoto(fd))
-    Toast.show({ content: '修改头像成功！', icon: 'success', afterClose: () => hidePopup() })
+    hidePopup()
+    Toast.show({ content: '修改头像成功！', icon: 'success' })
   }
 
   const onUpdate = async (key: string, value: string) => {
@@ -55,7 +56,14 @@ const ProfileEdit = () => {
       return
     }
     await dispatch(updateUserProfile(key, value))
-    Toast.show({ content: '修改成功', icon: 'success', afterClose: () => hidePopup() })
+    hidePopup()
+    Toast.show({ content: '修改成功', icon: 'success' })
+  }
+
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const onConfirm = (val: any) => {
+    const birthday = dayjs(val).format('YYYY-MM-DD')
+    onUpdate('birthday', birthday)
   }
 
   return (
@@ -107,7 +115,7 @@ const ProfileEdit = () => {
             >
               性别
             </List.Item>
-            <List.Item arrow extra={userProfile.birthday}>生日</List.Item>
+            <List.Item arrow extra={userProfile.birthday} onClick={() => setShowDatePicker(true)}>生日</List.Item>
           </List>
         </div>
 
@@ -134,6 +142,16 @@ const ProfileEdit = () => {
 
       {/* 文件上传 隐藏域 */}
       <input hidden type="file" ref={fileRef} onChange={onChangeFile} />
+
+      <DatePicker
+        title="请选择生日"
+        visible={showDatePicker}
+        onClose={() => setShowDatePicker(false)}
+        min={new Date('2020-01-01')}
+        max={new Date()}
+        value={new Date(userProfile.birthday)}
+        onConfirm={onConfirm}
+      ></DatePicker>
     </div>
   )
 }
