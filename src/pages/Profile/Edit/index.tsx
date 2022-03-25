@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Button, List, Popup, NavBar, Toast, DatePicker } from 'antd-mobile'
+import { Button, List, Popup, NavBar, Toast, DatePicker, Dialog } from 'antd-mobile'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
 import EditInput from './EditInput'
@@ -8,10 +8,13 @@ import styles from './index.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserProfile, updateUserProfile, updateUserPhoto } from '@/store/actions/profile'
 import { RootStateType } from '@/types/store'
+import { useHistory } from 'react-router-dom'
+import { logout } from '@/store/actions/login'
 
 const defaultImg = 'http://toutiao.itheima.net/images/user_head.jpg'
 
 const ProfileEdit = () => {
+  const history = useHistory()
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(getUserProfile())
@@ -66,6 +69,29 @@ const ProfileEdit = () => {
     onUpdate('birthday', birthday)
   }
 
+  const onLogout = () => {
+    Dialog.show({
+      content: '是否现在退出登录?',
+      closeOnAction: true,
+      actions: [[
+        {
+          key: 'cancel',
+          text: '取消',
+          style: { color: '#0094ff' }
+        },
+        {
+          key: 'confirm',
+          text: '确定',
+          danger: true,
+          onClick: async () => {
+            await dispatch(logout())
+            Toast.show({ content: '退出成功', icon: 'success', afterClose: () => history.replace('/login') })
+          }
+        }
+      ]]
+    })
+  }
+
   return (
     <div className={styles.root}>
       <div className="content">
@@ -115,12 +141,18 @@ const ProfileEdit = () => {
             >
               性别
             </List.Item>
-            <List.Item arrow extra={userProfile.birthday} onClick={() => setShowDatePicker(true)}>生日</List.Item>
+            <List.Item
+              arrow
+              extra={userProfile.birthday}
+              onClick={() => setShowDatePicker(true)}
+            >
+              生日
+              </List.Item>
           </List>
         </div>
 
         <div className="logout">
-          <Button className="btn">退出登录</Button>
+          <Button className="btn" onClick={onLogout}>退出登录</Button>
         </div>
       </div>
       <Popup
@@ -129,7 +161,7 @@ const ProfileEdit = () => {
         onMaskClick={hidePopup}
         destroyOnClose
       >
-        <EditInput hidePopup={hidePopup} type={showEditInput.type} onUpdate={onUpdate}></EditInput>
+        <EditInput hidePopup={hidePopup} type={showEditInput.type} onUpdate={onUpdate} />
       </Popup>
       <Popup
         visible={showEditList.visibile}
@@ -137,7 +169,7 @@ const ProfileEdit = () => {
         onMaskClick={hidePopup}
         destroyOnClose
       >
-        <EditList hidePopup={hidePopup} type={showEditList.type} onUpdate={onUpdate}></EditList>
+        <EditList hidePopup={hidePopup} type={showEditList.type} onUpdate={onUpdate} />
       </Popup>
 
       {/* 文件上传 隐藏域 */}
@@ -151,7 +183,7 @@ const ProfileEdit = () => {
         max={new Date()}
         value={new Date(userProfile.birthday)}
         onConfirm={onConfirm}
-      ></DatePicker>
+      />
     </div>
   )
 }

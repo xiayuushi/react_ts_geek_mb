@@ -8,6 +8,12 @@ const login = (state = initState, action: LoginActionType): TokenDataType => {
   if (action.type === 'login/login') {
     return action.response
   }
+  if (action.type === 'login/logout') {
+    return {
+      token: '',
+      refresh_token: ''
+    }
+  }
   return state
 }
 

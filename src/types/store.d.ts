@@ -1,3 +1,4 @@
+import { TokenDataType } from '@/types/data';
 import store from "@/store"
 import { ThunkAction } from 'redux-thunk'
 import { TokenDataType, UserType, UserProfileType } from "./data"
@@ -11,6 +12,8 @@ export type LoginActionType = {
   response: TokenDataType
 } | {
   type: 'login/getCode'
+} | {
+  type: 'login/logout'
 }
 
 export type ProfileActionType = {
