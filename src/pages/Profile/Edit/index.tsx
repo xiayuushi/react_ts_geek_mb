@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Button, List, Popup, NavBar, Toast } from 'antd-mobile'
 import classNames from 'classnames'
 
@@ -6,9 +6,10 @@ import EditInput from './EditInput'
 import EditList from './EditList'
 import styles from './index.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
-import { getUserProfile, updateUserProfile } from '@/store/actions/profile'
+import { getUserProfile, updateUserProfile, updateUserPhoto } from '@/store/actions/profile'
 import { RootStateType } from '@/types/store'
 
+const defaultImg = 'http://toutiao.itheima.net/images/user_head.jpg'
 
 const ProfileEdit = () => {
   const dispatch = useDispatch()
@@ -38,8 +39,21 @@ const ProfileEdit = () => {
       visibile: false
     })
   }
+
+  const fileRef = useRef<HTMLInputElement>(null)
+  const onChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files![0]
+    const fd = new FormData()
+    fd.append('photo', file)
+    await dispatch(updateUserPhoto(fd))
+    Toast.show({ content: '修改头像成功！', icon: 'success', afterClose: () => hidePopup() })
+  }
+
   const onUpdate = async (key: string, value: string) => {
-    console.log(key, value)
+    if (key === 'photo') {
+      fileRef.current!.click()
+      return
+    }
     await dispatch(updateUserProfile(key, value))
     Toast.show({ content: '修改成功', icon: 'success', afterClose: () => hidePopup() })
   }
@@ -61,7 +75,7 @@ const ProfileEdit = () => {
                   <img
                     width={24}
                     height={24}
-                    src={userProfile.photo ? userProfile.photo : 'http://toutiao.itheima.net/images/user_head.jpg'}
+                    src={userProfile.photo ? userProfile.photo : defaultImg}
                     alt=""
                   />
                 </span>
@@ -93,9 +107,7 @@ const ProfileEdit = () => {
             >
               性别
             </List.Item>
-            <List.Item arrow extra={userProfile.birthday}>
-              生日
-            </List.Item>
+            <List.Item arrow extra={userProfile.birthday}>生日</List.Item>
           </List>
         </div>
 
@@ -119,6 +131,9 @@ const ProfileEdit = () => {
       >
         <EditList hidePopup={hidePopup} type={showEditList.type} onUpdate={onUpdate}></EditList>
       </Popup>
+
+      {/* 文件上传 隐藏域 */}
+      <input hidden type="file" ref={fileRef} onChange={onChangeFile} />
     </div>
   )
 }
@@ -127,3 +142,15 @@ export default ProfileEdit
 
 // 01、因修改昵称与修改简介的弹出层结构、逻辑一致，因此封装EditInput组件以便复用这两种弹出层 
 // 02、因修改头像与修改性别的弹出层结构、逻辑一致，因此封装EditList组件以便复用这两种弹出层 
+// 03、onUpdate这个事件可以修改个人信息：性别、昵称、头像、简介、生日，但是头像走的是图片上传
+// 03、onUpdate形参如果key是'photo'，则说明用户点击的是修改头像，即点击了'拍照'或者'本地选择'，则必须return，不能让其往后走更新其他的昵称或者简介生日等逻辑
+// 04、当前项目修改个人资料时，无论是点击了'拍照'或者'本地选择'都是做文件上传，并没有调用原生能力（如拍照API）
+// 04、如果'拍照'需要调用原生能力，则可以继续用第二形参value值做判断：'拍照'对应的value值是'0'，'本地选择'对应的value值是'1'
+// 05、逻辑中使用的'!'是非空断言，断言该数据或者方法一定存在不会为空（非空断言在TS中可用，在JS中不能使用）
+// 06、逻辑中使用的'?'是可选链操作符，表示有该数据时会往后取值操作，否则不会往后取值操作（可选链操作符在JS或者TS中都能使用）
+// 07、文件上传 input[type='file']：设置hidden属性隐藏域 + 设置ref属性绑定input并调用click()打开隐藏域 + 设置onChange事件捕捉文件上传信息
+// 08、文件上传需要实例化FormData对象进行append()参数拼接，将拼接好参数的formdata实例化对象作为接口参数，调用接口发送请求
+// 08、FormData实例化对象调用append()拼接参数时，key必须与接口文档的字段保持一致，即 new FormData.append('接口文档要求的字段名',值)
+
+// N1、获取DOM的类型，可以在DOM元素上设置ref属性，将光标移入ref属性上面查看该DOM元素对应TS类型
+// N2、获取DOM的事件对象类型，可以在DOM元素上设置对应的行内事件，行内事件中使用箭头函数，将光标移入行内事件 `e=>`的e中查看该事件对象对应的TS类型
