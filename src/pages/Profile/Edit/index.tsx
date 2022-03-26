@@ -96,7 +96,12 @@ const ProfileEdit = () => {
     <div className={styles.root}>
       <div className="content">
         {/* 标题 */}
-        <NavBar style={{ '--border-bottom': '1px solid #F0F0F0' }}>个人信息</NavBar>
+        <NavBar
+          onBack={() => history.go(-1)}
+          style={{ '--border-bottom': '1px solid #F0F0F0' }}
+        >
+          个人信息
+          </NavBar>
 
         <div className="wrapper">
           {/* 列表 */}

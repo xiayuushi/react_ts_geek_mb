@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { NavBar, Form, Input, Button, List, Toast } from 'antd-mobile'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import styles from './index.module.scss'
 import { LoginParamsType } from '@/types/data'
@@ -9,6 +9,7 @@ import { InputRef } from 'antd-mobile/es/components/input'
 
 const Login = () => {
   const history = useHistory()
+  const location = useLocation<{ from: string }>()
   const back = () => {
     history.go(-1)
   }
@@ -16,7 +17,13 @@ const Login = () => {
   const dispatch = useDispatch()
   const onFinish = async (values: LoginParamsType) => {
     await dispatch(login(values))
-    Toast.show({ content: '登录成功', icon: 'success', afterClose: () => { history.push('/layout') } })
+    console.log(location.state);
+
+    Toast.show({
+      content: '登录成功',
+      icon: 'success',
+      afterClose: () => { history.replace(location.state ? location.state.from : '/layout') }
+    })
   }
 
   const [form] = Form.useForm()
@@ -96,6 +103,7 @@ const Login = () => {
               type="submit"
               color="primary"
               block
+            // onClick={login}
             >
               登录
             </Button>

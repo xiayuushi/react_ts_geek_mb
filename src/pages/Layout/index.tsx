@@ -8,6 +8,7 @@ import Home from '@pages/Home'
 import Question from '@pages/Question'
 import Video from '@pages/Video'
 import Profile from '@pages/Profile'
+import { AuthRoute2 } from '@/components/AuthRoute'
 
 const Layout = () => {
   const tabs = [
@@ -29,7 +30,7 @@ const Layout = () => {
         <Route exact path="/layout" component={Home}></Route>
         <Route path="/layout/qa" component={Question}></Route>
         <Route path="/layout/video" component={Video}></Route>
-        <Route path="/layout/profile" component={Profile}></Route>
+        <AuthRoute2 path="/layout/profile" component={Profile}></AuthRoute2>
       </Switch>
       <TabBar className='tab-bar' onChange={changeRoute} activeKey={location.pathname}>
         {tabs.map(item => (

@@ -14,7 +14,7 @@ export const removeToken = (): void => {
   localStorage.removeItem(TOKEN_KEY)
 }
 
-export const isLogin: boolean = !!getToken().token
+export const isLogin = (): boolean => !!getToken().token
 
 // 01、localStorage.getItem(key)，其中key必须是string类型
 // 02、localStorage.setItem(key,val)，其中key与val都必须是string类型
