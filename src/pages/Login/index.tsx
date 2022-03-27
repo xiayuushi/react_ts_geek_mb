@@ -139,3 +139,13 @@ export default Login
 // N5、当前组件销毁时（跳转到其他组件时），必须clearInterval()，否则会报错
 // N5、另外，此处有两次逻辑需要清除计时器，而且两次逻辑的依赖项不一样，因此不能写到同一个useEffect中
 // N5、第一次清除是倒计时time的值0时，依赖项是time，会检测time去判断。第二次清除是在组件销毁时，此时没有依赖项，只在组件销毁时执行一次！
+
+// useRef指定泛型
+// 01、通过useRef创建的对象xxx是不可变的，但它的current属性是可变的，该特性可以用于突破同一组件的闭包限制
+// 02、useRef指定泛型的三种情况（设置泛型为DOM元素或者组件的ref属性提示的类型，不指定泛型，指定为特殊类型与null的联合类型）
+// 情况1、通过useRef创建的对象xxx用于给DOM元素ref属性绑定时，初始值可以为null，只需给useRef的泛型指定为：光标移入DOM元素的ref属性时提示的那个类型即可
+// 情况1、例如：`const xxx = useRef<HTMLDivElement>(null)` + `<div ref={xxx}></div>` //参考 src/pages/Profile/Edit（绑定DOM元素或者组件的ref属性）
+// 情况2、通过useRef创建的对象xxx用于计时器时，初始值直接设置为一个数值即可，此时不需要为useRef指定泛型
+// 情况2、例如: `const xxx = useRef(1)` + `xxx.current = window.setInterval(()=>{},1000)` //参考 src/pages/Login （计时器倒计时） 
+// 情况3、通过useRef创建的对象xxx并非给DOM元素ref属性绑定时也并非给计时器使用时，如果初始值为null可能会报错，此时必须指定useRef的泛型为：赋值给current属性的数据的类型与null的联合类型
+// 情况3、例如: `const xxx = useRef<Socket|null>(null)` + `xxx.current = SocketIoClient` //参考 src/pages/Profile/Chat （小智同学）
