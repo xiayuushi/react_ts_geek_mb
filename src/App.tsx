@@ -3,11 +3,12 @@ import './App.scss'
 import Login from './pages/Login'
 import Layout from './pages/Layout'
 import ProfileEdit from './pages/Profile/Edit'
+import Chat from './pages/Profile/Chat'
 import NotFound from './pages/NotFound'
 
 import { Router, Switch, Route, Redirect } from 'react-router-dom'
 import history from '@utils/history'
-import { AuthRoute1 } from '@components/AuthRoute'
+import { AuthRoute1, AuthRoute2 } from '@components/AuthRoute'
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
           <Route path='/layout' component={Layout}></Route>
 
           <AuthRoute1 path='/profile/edit'><ProfileEdit /></AuthRoute1>
+          <AuthRoute2 path='/chat' component={Chat}></AuthRoute2>
           <Route component={NotFound}></Route>
         </Switch>
       </Router>

@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { RootStateType } from '@/types/store.d'
 import { useDispatch, useSelector } from "react-redux"
 
-export function useInitState<T extends keyof RootStateType>(actionCreator: () => void, reducerName: T) {
+function useInitState<T extends keyof RootStateType>(actionCreator: () => void, reducerName: T) {
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(actionCreator())
@@ -10,6 +10,8 @@ export function useInitState<T extends keyof RootStateType>(actionCreator: () =>
   const initState = useSelector((state: RootStateType) => state[reducerName])
   return initState
 }
+
+export default useInitState
 
 // 01、当前封装的是自定义hook，用于获取redux中某个reducer模块中的管理状态state
 // 02、使用该hook时，必须传入actionCreator与reducer模块名称
