@@ -1,12 +1,13 @@
 // axios内置的AxiosResponse的泛型参数（实参）
 // 传入给axios的get或者post或者其他请求的泛型，如axios.post<ApiResPonseType<T>>
 // 定义了两个字段，则这两个字段就会有完整的属性链式提示
+// T的类型可以调用接口时根据返回数据字段去定义，axios的方法使用泛型后，后续在组件中使用时就会有相应的属性提示
 export type ApiResponseType<T> = {
   message: string,
   data: T
 }
 
-export type TokenDataType = {
+export interface TokenDataType {
   token: string,
   refresh_token: string
 }

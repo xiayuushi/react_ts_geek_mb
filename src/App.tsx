@@ -5,13 +5,14 @@ import Layout from './pages/Layout'
 import ProfileEdit from './pages/Profile/Edit'
 import NotFound from './pages/NotFound'
 
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+import { Router, Switch, Route, Redirect } from 'react-router-dom'
+import history from '@utils/history'
 import { AuthRoute1 } from '@components/AuthRoute'
 
 const App = () => {
   return (
     <div className='app'>
-      <Router>
+      <Router history={history}>
         <Switch>
           <Redirect exact from='/' to='/layout'></Redirect>
           <Route path='/login' component={Login}></Route>

@@ -28,6 +28,14 @@ export const logout = (): LoginActionType => {
   }
 }
 
+export const saveToken = (tokenData: TokenDataType): LoginActionType => {
+  setToken(tokenData)
+  return {
+    type: 'login/saveToken',
+    response: tokenData
+  }
+}
+
 // 01、对于无需更新redux状态的，即无需处理对应的reducer中的状态的
 // 01、也就无需在action模块中通过dispatch函数提交type，如当前模块的getCode发送验证码到手机
 // 02、此处request是axios实例对象，该对象的方法可以添加泛型参数，但是它自身（这个对象）不能直接添加泛型参数

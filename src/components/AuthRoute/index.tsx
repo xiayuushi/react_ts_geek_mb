@@ -46,7 +46,7 @@ export const AuthRoute3 = ({ render, ...rest }: RouteProps) => {
 // 03、可以从中render属性的回调中，从形参解构出location用于获取被鉴权拦住之前的来源页path，以便后续登录后做跳转
 
 // 04、history.push()可以传入对象，此处的Redirect组件的to属性值也可以是对象
-// 04、history.push('/xxx')等同于history.push({ pathname:'/xxx'})
+// 04、history.push('/xxx',{ 自定义字段：值 })等同于history.push({ pathname:'/xxx', state:{自定义字段：值}})
 // 05、history.push()或者Redirect组件的to属性，传入对象时，state字段可以传递额外的属性，state也是个对象，对象内可以自定义字段传递数据
 // 05、例如：history.push({ pathname:'/xxx', state: { 自定义字段：值 }})
 // 05、此处，Redirect组件的to属性中，state用于传递额外数据（例如自定义的字段from，用于记录被鉴权路由拦下时的来源页路径）

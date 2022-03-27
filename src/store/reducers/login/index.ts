@@ -14,6 +14,9 @@ const login = (state = initState, action: LoginActionType): TokenDataType => {
       refresh_token: ''
     }
   }
+  if (action.type === 'login/saveToken') {
+    return action.response
+  }
   return state
 }
 
