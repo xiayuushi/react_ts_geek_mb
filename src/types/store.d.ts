@@ -1,10 +1,10 @@
-import { TokenDataType, TokenType } from '@/types/data';
+import { TokenDataType, TokenType, ChannelType } from '@/types/data';
 import store from "@/store"
 import { ThunkAction } from 'redux-thunk'
 import { TokenDataType, UserType, UserProfileType } from "./data"
 
 export type RootStateType = ReturnType<typeof store.getState>
-export type RootActionType = LoginActionType | ProfileActionType
+export type RootActionType = LoginActionType | ProfileActionType | HomeActionType
 export type RootThunkActionType = ThunkAction<void, RootStateType, any, RootActionType>
 
 export type LoginActionType = {
@@ -25,6 +25,11 @@ export type ProfileActionType = {
 } | {
   type: 'profile/getUserProfile',
   response: UserProfileType
+}
+
+export type HomeActionType = {
+  type: 'home/getUserChannels',
+  response: ChannelType[]
 }
 
 // 01、当前文件是store相关的类型声明集合

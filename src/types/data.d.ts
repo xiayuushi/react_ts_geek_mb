@@ -37,8 +37,15 @@ export type UserProfileType = {
   birthday: string,
 }
 
-export type ChatListType = { type: 'robot' | 'user', text: string }[]
+export type ChatListType = {
+  type: 'robot' | 'user',
+  text: string
+}[]
 
+export type ChannelType = {
+  id: string,
+  name: string
+}
 
 // 01、当前文件用于存放除store之外的，会在多个组件中用到的数据的声明
 // 02、ApiResponseType是根据axios内置的AxiosResponse类型封装而成的自定义响应类型
