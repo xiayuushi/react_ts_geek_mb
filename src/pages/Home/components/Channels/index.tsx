@@ -13,8 +13,6 @@ type PropsType = {
 }
 const Channels = ({ hide, userChannels, allChannels }: PropsType) => {
   const recommmendChannels = differenceBy(allChannels, userChannels, 'id')
-  const arr = [1, 2, 3, [4, 5, 6, [7, 8, 8, 8, 8, 9]]]
-  console.log(arr.flat(2))
 
   return (
     <div className={styles.root}>
@@ -69,11 +67,12 @@ export default Channels
 // 03、方式2：const recommendChannels = allChannels.filter(item=>{ return userChannels.every(v=> v.id===item.id) })
 // 03、方式3：const recommendChannels = allChannels.filter(item=>{ return !userChannels.some(v=> v.id===item.id) })
 // 03、方式4：const recommmendChannels = differenceBy(allChannels, userChannels, 'id') //lodash中的'differenceBy'方法
-// 04、用户频道列表渲染的功能优化（并非直接走接口获取频道列表，而是应该具体分析）
-// 04、Q1 如果用户已登录，在添加或者删除频道数据时，则应该发送请求获取用户的频道数据
-// 04、Q2 如果用户未登录，在添加或者删除频道数据时，则应该优先操作本地数据
-// 04、Q2 A 本地有，则操作本地数据
-// 04、Q2 B 本地无，则发送请求获取默认的频道数据，然后再存储到本地
+// 04、用户频道列表渲染的功能优化（并非直接走接口获取频道列表，而是应该具体分析，在action/home模块做逻辑判断）
+// 04、Q1 如果用户已登录，则应该发送请求获取用户的频道数据
+// 04、Q2 如果用户未登录，则应该优先操作本地数据
+// 04、Q2 A 本地有，则操作本地数据，不走接口
+// 04、Q2 B 本地无，则发送请求获取默认的频道数据，然后再存储到本地，后续则操作本地数据
+// N1、无论何种情况，getUserChannels都要提供action对象(含必须的type与自定义的response属性)以便在reducer中能够找到对应的type进行处理
 
 // lodash的使用流程
 // st1、安装lodash及类型声明文件，例如 `yarn add lodash @types/lodash`
