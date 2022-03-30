@@ -1,7 +1,7 @@
 import { TokenDataType, TokenType, ChannelType } from '@/types/data';
 import store from "@/store"
 import { ThunkAction } from 'redux-thunk'
-import { TokenDataType, UserType, UserProfileType } from "./data"
+import { TokenDataType, UserType, UserProfileType, AddChannelResType } from "./data"
 
 export type RootStateType = ReturnType<typeof store.getState>
 export type RootActionType = LoginActionType | ProfileActionType | HomeActionType
@@ -36,6 +36,9 @@ export type HomeActionType = {
 } | {
   type: 'home/changeActiveChannelId',
   payload: number
+} | {
+  type: 'home/addChannel',
+  response: AddChannelResType[]
 }
 
 // 01、当前文件是store相关的类型声明集合
@@ -48,3 +51,5 @@ export type HomeActionType = {
 // N2、RootAction通常只用作ThunkAction的第四个泛型参数类型
 // N3、RootThunkActionType通常会用于各个action模块，actionCreator函数的返回值类型
 // N4、各个actionType通常只用于各自action模块对应的reducer模块第二形参action的类型
+// N5、如果actionCreator调用接口请求却没有数据返回，也无需操作reducer中的状态
+// N5、简言之，如果服务器返回的数据无需作为redux的状态，则无需定义action.type，也无需为aixos请求方法指定泛型

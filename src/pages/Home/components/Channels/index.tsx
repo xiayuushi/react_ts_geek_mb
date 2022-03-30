@@ -5,7 +5,7 @@ import Icon from '@/components/Icon'
 import styles from './index.module.scss'
 import { ChannelType } from '@/types/data'
 import { differenceBy } from 'lodash'
-import { changeActiveChannelId } from '@/store/actions/home'
+import { changeActiveChannelId, delChannel, addChannel } from '@/store/actions/home'
 import { useDispatch } from 'react-redux'
 
 type PropsType = {
@@ -18,10 +18,30 @@ const Channels = ({ hide, userChannels, allChannels, activeChannelId }: PropsTyp
   const dispatch = useDispatch()
   const recommmendChannels = differenceBy(allChannels, userChannels, 'id')
 
+  const [isEdit, setIsEdit] = useState(false)
+  const ChangeIsEdit = () => {
+    setIsEdit(!isEdit)
+  }
+
   const changeChannel = (id: number) => {
+    if (isEdit) return
     dispatch(changeActiveChannelId(id))
     hide()
   }
+
+  const deleteChannel = (id: number) => {
+    if (userChannels.length < 5) return
+    if (id === activeChannelId) {
+      dispatch(changeActiveChannelId(0))
+    }
+    dispatch(delChannel(id))
+  }
+
+  const addingChannel = (channel: ChannelType) => {
+    if (!isEdit) return
+    dispatch(addChannel(channel))
+  }
+
   return (
     <div className={styles.root}>
       <div className="channel-header">
@@ -29,11 +49,11 @@ const Channels = ({ hide, userChannels, allChannels, activeChannelId }: PropsTyp
       </div>
       <div className="channel-content">
         {/* 编辑时，添加类名 edit */}
-        <div className={classnames('channel-item')}>
+        <div className={classnames('channel-item', isEdit && 'edit')}>
           <div className="channel-item-header">
             <span className="channel-item-title">我的频道</span>
-            <span className="channel-item-title-extra">点击进入频道</span>
-            <span className="channel-item-edit">编辑</span>
+            <span className="channel-item-title-extra">点击{isEdit ? '编辑' : '进入'}频道</span>
+            <span className="channel-item-edit" onClick={ChangeIsEdit}>{isEdit ? '完成' : '编辑'}</span>
           </div>
           <div className="channel-list">
             {/* 选中时，添加类名 selected */}
@@ -41,7 +61,7 @@ const Channels = ({ hide, userChannels, allChannels, activeChannelId }: PropsTyp
               userChannels.map(v => (
                 <span className={classnames('channel-list-item', v.id === activeChannelId && 'selected')} key={v.id} onClick={() => changeChannel(v.id)}>
                   {v.name}
-                  <Icon type="iconbtn_tag_close" />
+                  {v.id !== 0 && <Icon type="iconbtn_tag_close" onClick={() => deleteChannel(v.id)} />}
                 </span>
               ))
             }
@@ -56,7 +76,7 @@ const Channels = ({ hide, userChannels, allChannels, activeChannelId }: PropsTyp
           <div className="channel-list">
             {
               recommmendChannels.map(v => (
-                <span className="channel-list-item" key={v.id}>+ {v.name}</span>
+                <span className="channel-list-item" key={v.id} onClick={() => addingChannel(v)}>+ {v.name}</span>
               ))
             }
           </div>

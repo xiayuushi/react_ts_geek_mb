@@ -1,6 +1,6 @@
 import request from "@utils/request"
 import { RootThunkActionType, HomeActionType } from '@/types/store'
-import { ApiResponseType, ChannelType } from '@/types/data'
+import { ApiResponseType, ChannelType, AddChannelResType } from '@/types/data'
 import { isLogin, localHasUnloginChannelsList, getLocalUnloginChannelsList, setLocalUnloginChannelsList } from '@utils/storage';
 
 export const getUserChannels = (): RootThunkActionType => {
@@ -50,9 +50,45 @@ export const changeActiveChannelId = (channelId: number): HomeActionType => {
   }
 }
 
+export const delChannel = (channelId: number): RootThunkActionType => {
+  return async dispatch => {
+    if (isLogin()) {
+      await request.delete('/user/channels', {
+        data: {
+          channels: [channelId]
+        }
+      })
+    } else {
+      const localRestChannelsList = getLocalUnloginChannelsList().filter(v => v.id !== channelId)
+      setLocalUnloginChannelsList(localRestChannelsList)
+    }
+    dispatch(getUserChannels())
+  }
+}
+
+export const addChannel = (channel: ChannelType): RootThunkActionType => {
+  return async (dispatch, getState) => {
+    if (isLogin()) {
+      await request.patch('/user/channels', { channels: [channel] })
+    } else {
+      const { home: { userChannels } } = getState()
+      setLocalUnloginChannelsList([...userChannels, channel])
+    }
+    dispatch(getUserChannels())
+  }
+}
+
 // 01、用户频道列表渲染的功能优化（并非直接走接口获取频道列表，而是应该具体分析，在action/home模块做逻辑判断）
 // 01、Q1 如果用户已登录（用户），则应该发送请求获取用户的频道数据
 // 01、Q2 如果用户未登录（游客），则应该优先操作本地数据
 // 01、Q2 A 本地有，则操作本地数据，不走接口
 // 01、Q2 B 本地无，则发送请求获取默认的频道数据，然后再存储到本地，后续则操作本地数据
 // N1、无论何种情况，getUserChannels都要提供action对象(含必须的type与自定义的response属性)以便在reducer中能够找到对应的type进行处理
+
+// 02、删除、新增频道的操作
+// 02、Q1 用户已登录，直接走删除（或新增）接口，删除（或新增）后再更新最新的频道列表数据
+// 02、Q2 用户未登录，不能调用删除（或新增）接口，仅进行本地缓存删除（或新增），删除（或新增）后再更新最新的频道列表数据
+
+// N1、如果actionCreator调用接口请求却没有数据返回，也无需操作reducer中的状态
+// N1、简言之，如果服务器返回的数据无需作为redux的状态，则无需定义action.type，也无需为aixos请求方法指定泛型
+// N2、actionCreator返回函数时，函数第二形参可以获取到根reducer的状态，即RootState
