@@ -1,13 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './index.module.scss'
 import Icon from '@components/Icon'
-import { Tabs } from 'antd-mobile'
+import { Tabs, Popup } from 'antd-mobile'
 import useInitState from '@/hooks/useInitState'
-import { getUserChannels } from '@/store/actions/home'
-
+import { getUserChannels, getAllChannels } from '@/store/actions/home'
+import Channels from './components/Channels'
 
 const Home = () => {
   const { userChannels } = useInitState(getUserChannels, 'home')
+  const { allChannels } = useInitState(getAllChannels, 'home')
+  const [visible, setVisible] = useState(false)
+  const showPopup = () => {
+    setVisible(true)
+  }
+  const hidePopup = () => {
+    setVisible(false)
+  }
   return (
     <div className={styles.root}>
       {/* 频道 Tabs 列表 */}
@@ -27,8 +35,21 @@ const Home = () => {
       {/* 顶部右侧图标 */}
       <div className="tabs-opration">
         <Icon type="iconbtn_search" />
-        <Icon type="iconbtn_channel" />
+        <Icon type="iconbtn_channel" onClick={showPopup} />
       </div>
+      {/* 图标对应的频道弹出层 */}
+      <Popup
+        visible={visible}
+        onMaskClick={hidePopup}
+        position="right"
+        bodyStyle={{ height: '100vh' }}
+      >
+        <Channels
+          hide={hidePopup}
+          userChannels={userChannels}
+          allChannels={allChannels}
+        />
+      </Popup>
     </div>
   )
 }

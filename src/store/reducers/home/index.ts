@@ -2,10 +2,12 @@ import { HomeActionType } from "@/types/store"
 import { ChannelType } from "@/types/data"
 
 type HomeStateType = {
-  userChannels: ChannelType[]
+  userChannels: ChannelType[],
+  allChannels: ChannelType[]
 }
 const initState: HomeStateType = {
-  userChannels: {} as ChannelType[]
+  userChannels: [],
+  allChannels: []
 }
 
 const home = (state = initState, action: HomeActionType): HomeStateType => {
@@ -13,6 +15,12 @@ const home = (state = initState, action: HomeActionType): HomeStateType => {
     return {
       ...state,
       userChannels: action.response
+    }
+  }
+  if (action.type === 'home/getAllChannels') {
+    return {
+      ...state,
+      allChannels: action.response
     }
   }
   return state

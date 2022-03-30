@@ -30,6 +30,9 @@ export type ProfileActionType = {
 export type HomeActionType = {
   type: 'home/getUserChannels',
   response: ChannelType[]
+} | {
+  type: 'home/getAllChannels',
+  response: ChannelType[]
 }
 
 // 01、当前文件是store相关的类型声明集合

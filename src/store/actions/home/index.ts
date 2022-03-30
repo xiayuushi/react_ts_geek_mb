@@ -12,3 +12,14 @@ export const getUserChannels = (): RootThunkActionType => {
     })
   }
 }
+
+export const getAllChannels = (): RootThunkActionType => {
+  return async dispatch => {
+    const res = await request.get<ApiResponseType<{ channels: ChannelType[] }>>('/channels')
+    console.log(res.data.data.channels)
+    dispatch({
+      type: 'home/getAllChannels',
+      response: res.data.data.channels
+    })
+  }
+}
