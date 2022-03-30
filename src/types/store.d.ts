@@ -33,6 +33,9 @@ export type HomeActionType = {
 } | {
   type: 'home/getAllChannels',
   response: ChannelType[]
+} | {
+  type: 'home/changeActiveChannelId',
+  payload: number
 }
 
 // 01、当前文件是store相关的类型声明集合

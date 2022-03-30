@@ -5,15 +5,23 @@ import Icon from '@/components/Icon'
 import styles from './index.module.scss'
 import { ChannelType } from '@/types/data'
 import { differenceBy } from 'lodash'
+import { changeActiveChannelId } from '@/store/actions/home'
+import { useDispatch } from 'react-redux'
 
 type PropsType = {
   hide: () => void,
   userChannels: ChannelType[],
-  allChannels: ChannelType[]
+  allChannels: ChannelType[],
+  activeChannelId: number
 }
-const Channels = ({ hide, userChannels, allChannels }: PropsType) => {
+const Channels = ({ hide, userChannels, allChannels, activeChannelId }: PropsType) => {
+  const dispatch = useDispatch()
   const recommmendChannels = differenceBy(allChannels, userChannels, 'id')
 
+  const changeChannel = (id: number) => {
+    dispatch(changeActiveChannelId(id))
+    hide()
+  }
   return (
     <div className={styles.root}>
       <div className="channel-header">
@@ -31,7 +39,7 @@ const Channels = ({ hide, userChannels, allChannels }: PropsType) => {
             {/* 选中时，添加类名 selected */}
             {
               userChannels.map(v => (
-                <span className={classnames('channel-list-item')} key={v.id}>
+                <span className={classnames('channel-list-item', v.id === activeChannelId && 'selected')} key={v.id} onClick={() => changeChannel(v.id)}>
                   {v.name}
                   <Icon type="iconbtn_tag_close" />
                 </span>

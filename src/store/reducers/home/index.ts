@@ -3,11 +3,13 @@ import { ChannelType } from "@/types/data"
 
 type HomeStateType = {
   userChannels: ChannelType[],
-  allChannels: ChannelType[]
+  allChannels: ChannelType[],
+  activeChannelId: number
 }
 const initState: HomeStateType = {
   userChannels: [],
-  allChannels: []
+  allChannels: [],
+  activeChannelId: 0
 }
 
 const home = (state = initState, action: HomeActionType): HomeStateType => {
@@ -21,6 +23,12 @@ const home = (state = initState, action: HomeActionType): HomeStateType => {
     return {
       ...state,
       allChannels: action.response
+    }
+  }
+  if (action.type === 'home/changeActiveChannelId') {
+    return {
+      ...state,
+      activeChannelId: action.payload
     }
   }
   return state

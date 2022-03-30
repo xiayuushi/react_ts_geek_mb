@@ -43,7 +43,7 @@ export type ChatListType = {
 }[]
 
 export type ChannelType = {
-  id: string,
+  id: number,
   name: string
 }
 

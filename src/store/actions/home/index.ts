@@ -43,6 +43,13 @@ export const getAllChannels = (): RootThunkActionType => {
   }
 }
 
+export const changeActiveChannelId = (channelId: number): HomeActionType => {
+  return {
+    type: 'home/changeActiveChannelId',
+    payload: channelId
+  }
+}
+
 // 01、用户频道列表渲染的功能优化（并非直接走接口获取频道列表，而是应该具体分析，在action/home模块做逻辑判断）
 // 01、Q1 如果用户已登录（用户），则应该发送请求获取用户的频道数据
 // 01、Q2 如果用户未登录（游客），则应该优先操作本地数据
