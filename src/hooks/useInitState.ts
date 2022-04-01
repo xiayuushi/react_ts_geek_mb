@@ -28,3 +28,4 @@ export default useInitState
 // N3、例如：const actionCreator=():XxxActionType=>{ return {type:'xxx', key: val} }
 // N4、在action模块定义actionCreator时，如果actionCreator返回是函数形式，则使用当前自定义封装的useInitState会比较方便
 // N4、例如：const actionCreator=():RootThunkActionType=>{ return async (dispatch)=>{ await axios.get('/xxx'); dispatch({type:'xxx', key:val})  } }
+// N5、当前useInitState适用于没有参数且返回函数形式的actionCreator，如果是对象或者需要传入参数的actionCreator则不要使用当前封装的hook

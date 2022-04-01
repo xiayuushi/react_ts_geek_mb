@@ -1,5 +1,4 @@
 import { TokenDataType, ChannelType } from '@/types/data'
-import login from '@/store/reducers/login'
 
 export const TOKEN_KEY = 'REACT_TS_GEEK_MOBILE'
 export const CHANNELS_KEY = 'REACT_TS_GEEK_MOBILE_UNLOGINCHANNELS'

@@ -7,6 +7,7 @@ import { getUserChannels, getAllChannels, changeActiveChannelId } from '@/store/
 import Channels from './components/Channels'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootStateType } from '@/types/store'
+import ArticleList from './components/ArticleList'
 
 const Home = () => {
   const { userChannels } = useInitState(getUserChannels, 'home')
@@ -35,7 +36,7 @@ const Home = () => {
             {
               userChannels.map(v => (
                 <Tabs.Tab title={v.name} key={v.id}>
-                  {v.name}的内容
+                  <ArticleList channelId={v.id}></ArticleList>
                 </Tabs.Tab>
               ))
             }

@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styles from './index.module.scss'
 import { TabBar } from 'antd-mobile'
 import Icon from '@components/Icon'
-import { useHistory, useLocation, Switch, Route, Redirect } from 'react-router-dom'
+import { useHistory, useLocation, Switch, Route } from 'react-router-dom'
 
 import Home from '@pages/Home'
 import Question from '@pages/Question'

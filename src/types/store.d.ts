@@ -1,4 +1,4 @@
-import { TokenDataType, TokenType, ChannelType } from '@/types/data';
+import { TokenDataType, TokenType, ChannelType, ArticleResType, ArticleType } from '@/types/data';
 import store from "@/store"
 import { ThunkAction } from 'redux-thunk'
 import { TokenDataType, UserType, UserProfileType, AddChannelResType } from "./data"
@@ -39,6 +39,13 @@ export type HomeActionType = {
 } | {
   type: 'home/addChannel',
   response: AddChannelResType[]
+} | {
+  type: 'home/getChannelArticleList',
+  payload: {
+    channelId: number,
+    timestamp: string,
+    articleList: ArticleType[]
+  }
 }
 
 // 01、当前文件是store相关的类型声明集合
@@ -47,9 +54,23 @@ export type HomeActionType = {
 // 04、RootActionType是集合了所有action模块声明的对象
 // 05、RootThunkActionType是项目通用的函数返回值泛型参数（由redux-thunk中内置的ThunkAction泛型进行自定义封装而成）
 
+
+// 06、不同频道对应渲染不同的文章列表，因此此处设置action时，需要将频道id也加进来，与服务器返回的字段进行结合
+// 06、而不再是像其他的action那样，只需要指定一个必须的type属性，再额外配置一个自定义属性来全盘承接服务器返回的数据
+// 06、此处自定义配置了自定义属性对象，在对象内再次配置自定义channelId、timestamp、articlesList来分别承接频道、服务器返回的时间戳、服务器返回的频道对应文章列表
+// 之前：{type: 'xxx', payload: res.xxx.xxx }
+// 此时：{type: 'xxx', payload: { channelId: 频道id， timestamp:res.xxx.xxx, articlesList:res.xxx.xxxx } }
+// 后续，定义state时：channelArticles:{[channelId]:{timestap, articleList},[channelId]:{timestap, articleList},... }
+// 以上payload是自定义的属性，channelId、timestamp、 articlesList都是自定义的字段，后续只需要将频道id与服务器返回的数据赋值给这些字段变量即可
+// 之所以，这么做是为了后续通过不同的频道id来渲染不同的文章列表，否则后续的逻辑会很难处理
+// 另外，这些必须在定义数据的类型的时候就应该考虑好（可以先调用一次接口，才能明确服务器返回的数据是什么类型）
+
+
 // N1、RootReducer（RootState）通常用于作ThunkAtion的第二个泛型参数类型、或者用于useSelector作为回调形参的泛型
 // N2、RootAction通常只用作ThunkAction的第四个泛型参数类型
 // N3、RootThunkActionType通常会用于各个action模块，actionCreator函数的返回值类型
 // N4、各个actionType通常只用于各自action模块对应的reducer模块第二形参action的类型
 // N5、如果actionCreator调用接口请求却没有数据返回，也无需操作reducer中的状态
 // N5、简言之，如果服务器返回的数据无需作为redux的状态，则无需定义action.type，也无需为aixos请求方法指定泛型
+// N6、如何快速定义接口返回的数据类型
+// N6、先发送一次请求，拿到数据后，在控制台复制返回的数据回到vscode中赋值给一个变量，将光标移入该变量，然后根据TS自动的类型推断复制vscode提示的类型即可
