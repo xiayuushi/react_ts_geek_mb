@@ -2,9 +2,9 @@ import React, { useEffect } from 'react'
 import ArticleItem from '../ArticleItem'
 import styles from './index.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
-import { getArticleList } from '@store/actions/home'
+import { getArticleList, refreshArticleList } from '@store/actions/home'
 import { RootStateType } from '@/types/store'
-import { InfiniteScroll } from 'antd-mobile'
+import { InfiniteScroll, PullToRefresh } from 'antd-mobile'
 
 type PropsType = {
   channelId: number
@@ -14,24 +14,31 @@ const ArticleList = ({ channelId }: PropsType) => {
   const dispatch = useDispatch()
   const { channelArticles } = useSelector((state: RootStateType) => state.home)
 
-  const hasMore = true
+  const hasMore = channelArticles[channelId]?.timestamp !== null
   const loadMore = async () => {
     await dispatch(getArticleList(channelId, channelArticles[channelId]?.timestamp || Date.now()))
   }
 
+  const onRefresh = async () => {
+    await dispatch(refreshArticleList(channelId, Date.now()))
+  }
+
   return (
     <div className={styles.root}>
-      {/* 文章列表中的每一项 */}
-      {
-        channelArticles[channelId]?.articleList.map(v =>
-          (
-            <div className="article-item" key={v.art_id}>
-              <ArticleItem article={v} />
-            </div>
-          ))
-      }
-      {/* 上拉加载更多（antd-mobile无限滚动） */}
-      <InfiniteScroll loadMore={loadMore} hasMore={hasMore} />
+      {/* 下拉刷新（antd-mobile下拉刷新） */}
+      <PullToRefresh onRefresh={onRefresh}>
+        {/* 文章列表中的每一项 */}
+        {
+          channelArticles[channelId]?.articleList.map(v =>
+            (
+              <div className="article-item" key={v.art_id}>
+                <ArticleItem article={v} />
+              </div>
+            ))
+        }
+        {/* 上拉加载更多（antd-mobile无限滚动） */}
+        <InfiniteScroll loadMore={loadMore} hasMore={hasMore} />
+      </PullToRefresh>
     </div>
   )
 }
@@ -49,3 +56,4 @@ export default ArticleList
 // 04、A 如果是传入服务器返回的时间戳channelArticles[channelId]?.timestamp，则是请求历史推荐数据
 // 04、B 如果是传入当前时间戳Date.now()，则是请求当前最新的推荐数据
 // 05、因为无限加载做的是文章数据的拼接，因此需要修改action.type === 'home/getChannelArticleList'时的reducer,将请求回来的数据的逻辑由直接赋值改成新旧数据的展开与拼接
+// 06、下拉刷新做的并非是数据的拼接，因此action.type === 'home/refreshChannelArticleList'时，只需要将最新的时间戳Date.now()传入，然后获取数据直接进行赋值即可，无需新旧文章列表进行拼接

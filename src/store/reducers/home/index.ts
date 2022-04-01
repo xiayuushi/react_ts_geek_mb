@@ -52,6 +52,19 @@ const home = (state = initState, action: HomeActionType): HomeStateType => {
       }
     }
   }
+  if (action.type === 'home/refreshChannelArticleList') {
+    const { channelId, timestamp, articleList } = action.payload
+    return {
+      ...state,
+      channelArticles: {
+        ...state.channelArticles,
+        [channelId]: {
+          articleList: [...articleList],
+          timestamp: +timestamp
+        }
+      }
+    }
+  }
   return state
 }
 
@@ -82,6 +95,8 @@ export default home
 // 06、方式2：`const oldArticleList = state.channelArticles[channelId]?.articleList || []`
 // 06、第一个单`?`可选链操作符是为了防止一开始频道数据为空时往后取articleList的值导致报错
 // 06、第二个双`?`它只会判断undefined与null的情况，即如果articleList是undefined或者null时，才会往后取[]，避免undefined或者null使用展开运算符报错
+
+// 07、下拉刷新做的并非是数据的拼接，因此action.type === 'home/refreshChannelArticleList'时，只需要将最新的时间戳Date.now()传入，然后获取数据直接进行赋值即可，无需新旧文章列表进行拼接
 
 // 运算符 ? 、?? 、!、||、&&的区别 
 // 01、? 是可选链操作符，避免undefined往后取值报错
