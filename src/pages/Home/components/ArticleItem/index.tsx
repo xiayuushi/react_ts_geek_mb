@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import { ArticleType } from '@/types/data'
 import { isLogin } from '@/utils/storage'
 import dayjs from 'dayjs'
+import Img from '@components/Img'
 
 type Props = {
   article: ArticleType
@@ -27,7 +28,7 @@ const ArticleItem = ({ article }: Props) => {
             {
               images?.map((v, i) => (
                 <div className="article-img-wrapper" key={i}>
-                  <img src={v} alt="" />
+                  <Img src={v} alt="" />
                 </div>
               ))
             }

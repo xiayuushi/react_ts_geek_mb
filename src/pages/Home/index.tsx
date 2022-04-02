@@ -8,8 +8,10 @@ import Channels from './components/Channels'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootStateType } from '@/types/store'
 import ArticleList from './components/ArticleList'
+import { useHistory } from 'react-router-dom'
 
 const Home = () => {
+  const history = useHistory()
   const { userChannels } = useInitState(getUserChannels, 'home')
   const { allChannels } = useInitState(getAllChannels, 'home')
 
@@ -45,7 +47,7 @@ const Home = () => {
       }
       {/* 顶部右侧图标 */}
       <div className="tabs-opration">
-        <Icon type="iconbtn_search" />
+        <Icon type="iconbtn_search" onClick={() => history.push('/search')} />
         <Icon type="iconbtn_channel" onClick={showPopup} />
       </div>
       {/* 图标对应的频道弹出层 */}

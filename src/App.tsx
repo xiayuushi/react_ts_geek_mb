@@ -4,6 +4,8 @@ import Login from './pages/Login'
 import Layout from './pages/Layout'
 import ProfileEdit from './pages/Profile/Edit'
 import Chat from './pages/Profile/Chat'
+import Article from './pages/Article'
+import Search from './pages/Search'
 import NotFound from './pages/NotFound'
 
 import { Router, Switch, Route, Redirect } from 'react-router-dom'
@@ -18,6 +20,8 @@ const App = () => {
           <Redirect exact from='/' to='/layout'></Redirect>
           <Route path='/login' component={Login}></Route>
           <Route path='/layout' component={Layout}></Route>
+          <Route path='/article/:id' component={Article}></Route>
+          <Route path='/search' component={Search}></Route>
 
           <AuthRoute1 path='/profile/edit'><ProfileEdit /></AuthRoute1>
           <AuthRoute2 path='/chat' component={Chat}></AuthRoute2>

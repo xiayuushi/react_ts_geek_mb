@@ -19,11 +19,12 @@ const Img = ({ src, alt, className }: PropsType) => {
       ([{ isIntersecting }]) => {
         if (isIntersecting) {
           imgRef.current!.src = imgRef.current!.getAttribute('data-src')!
+          ob.unobserve(imgRef.current!)
         }
       })
     ob.observe(imgRef.current!)
     return () => {
-      ob.unobserve(imgRef.current!)
+      ob.disconnect()
     }
   }, [])
 
@@ -68,3 +69,5 @@ export default Img
 // 06、监听图片是否进入可视区，一旦进入可视区，再将图片url设置给img的src属性
 // N1、必须使用`!`非空断言，断定img元素不为空，否则通过JS对空元素进行属性添加或获取（而且只要触发useEffect，说明DOM已经渲染完成，DOM标签也已经渲染了）
 // N2、IntersectionObserver()这个原生webapi的用途很多，它也可以用于封装上拉加载更多组件（功能与antd-mobile的InfiniteScroll组件类似）
+// N3、Q：报错`Uncaught TypeError: Failed to execute 'unobserve' on 'IntersectionObserver': parameter 1 is not of type 'Element'`
+// N3、A：将组件销毁时的清理代码由 ob.unobserve(imgRef.current!) 改成 ob.disconnect()即可解决
