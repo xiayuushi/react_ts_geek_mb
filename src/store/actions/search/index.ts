@@ -1,6 +1,6 @@
 import request from "@utils/request"
 import { ApiResponseType, SuggestionType } from '@/types/data'
-import { RootThunkActionType } from "@/types/store"
+import { RootThunkActionType, SearchActionType } from "@/types/store"
 
 export const getSuggestion = (q: string): RootThunkActionType => {
   return async dispatch => {
@@ -10,5 +10,11 @@ export const getSuggestion = (q: string): RootThunkActionType => {
       type: 'search/getSuggestion',
       response: res.data.data
     })
+  }
+}
+
+export const clearSuggestion = (): SearchActionType => {
+  return {
+    type: 'search/clearSuggestion'
   }
 }

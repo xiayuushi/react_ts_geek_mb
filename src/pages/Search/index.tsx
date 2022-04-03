@@ -6,7 +6,7 @@ import { useDebounceFn } from 'ahooks'
 
 import Icon from '@/components/Icon'
 import styles from './index.module.scss'
-import { getSuggestion } from '@/store/actions/search'
+import { getSuggestion, clearSuggestion } from '@/store/actions/search'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootStateType } from '@/types/store'
 
@@ -14,19 +14,25 @@ const SearchPage = () => {
   const history = useHistory()
   const dispatch = useDispatch()
   const [keyword, setKeyword] = useState('')
+  const [isSuggestion, setIsSuggestion] = useState(false)
   const { suggestion: { options } } = useSelector((state: RootStateType) => state.search)
 
   const { run, cancel } = useDebounceFn((keyword) => {
     dispatch(getSuggestion(keyword))
   }, { wait: 2000 })
   const onChange = (e: string) => {
-    if (!e.trim()) return
+    if (!e.trim()) {
+      setIsSuggestion(false)
+      dispatch(clearSuggestion)
+      return
+    }
     setKeyword(e)
+    setIsSuggestion(true)
     run(e)
   }
 
   const keywordHighLight = (str: string) => {
-    return str.replace(
+    return str?.replace(
       new RegExp(keyword, 'gi'),
       (match) => `<span>${match}</span>`
     )
@@ -49,35 +55,33 @@ const SearchPage = () => {
         <SearchBar placeholder="请输入关键字搜索" onChange={onChange} />
       </NavBar>
 
-      {/* 搜索历史（与下方搜索联系互斥） */}
-      {true && (
-        <div
-          className="history"
-          style={{
-            display: true ? 'none' : 'block'
-          }}
-        >
-          <div className="history-header">
-            <span>搜索历史</span>
-            <span>
-              <Icon type="iconbtn_del" />
+      {/* 搜索历史（与下方搜索联系互斥显示） */}
+      <div
+        className="history"
+        style={{
+          display: isSuggestion ? 'none' : 'block'
+        }}
+      >
+        <div className="history-header">
+          <span>搜索历史</span>
+          <span>
+            <Icon type="iconbtn_del" />
               清除全部
             </span>
-          </div>
-
-          <div className="history-list">
-            <span className="history-item">
-              <span className="text-overflow">黑马程序员</span>
-              <Icon type="iconbtn_essay_close" />
-            </span>
-          </div>
         </div>
-      )}
 
-      {/* 搜索联想（与上方搜索历史互斥） span标签是搜索文字的高亮效果展示 */}
-      <div className={classnames('search-result', true ? 'show' : '')}>
+        <div className="history-list">
+          <span className="history-item">
+            <span className="text-overflow">黑马程序员</span>
+            <Icon type="iconbtn_essay_close" />
+          </span>
+        </div>
+      </div>
+
+      {/* 搜索联想（与上方搜索历史互斥显示） span标签是搜索文字的高亮效果展示 */}
+      <div className={classnames('search-result', isSuggestion ? 'show' : '')}>
         {
-          options.map((v, i) => (
+          options[0] !== null && options.map((v, i) => (
             <div className="result-item" key={i}>
               <Icon className="icon-search" type="iconbtn_search" />
               <div className="result-value text-overflow" dangerouslySetInnerHTML={{ __html: keywordHighLight(v) }}>
@@ -85,7 +89,6 @@ const SearchPage = () => {
             </div>
           ))
         }
-
       </div>
     </div>
   )
@@ -121,7 +124,7 @@ export default SearchPage
 // 字符串replace()的参数
 // 01、String.prototype.replace(参数1是替换前的字符, 参数2是替换后的字符)
 // 02、参数2可以是具体的值，也可以是一个函数，函数形参就是替换前的字符匹配到的值，因此可以通过该函数提取出搜索的关键字匹配到的值
-// 02、String.prototype.replace('xxx', match=>{ match可以获取到替换前的字符'xxx'对应匹配到的值，且是保留源格式匹配到的值 })
+// 02、String.prototype.replace('xxx', match=>{ match可以获取到替换前的字符'xxx'对应匹配到的值，且是保留源大小写匹配到的值 })
 
 // 搜索关键字实现高亮的思路
 // 01、调用接口后，获取到包含搜索关键字的联想记录
@@ -138,4 +141,4 @@ export default SearchPage
 // N3、但是如果是在用户输入的标签中要慎用，因为react中DOM元素的dangerouslySetInnerHTML属性容易受到xss攻击
 // N3、如果是针对仅做渲染的DOM元素，则可以放心的使用，该属性的值是一个对象，注意对象内的__html属性是双下划线，__html的值就是需要解析的富文本
 // N3、例如:`<div dangerouslySetInnerHTML={{__html: 此处放入需要解析的富文本 }}></div>`
-// N4、String.prototype.replace(new RegExp(keyword, 'gi'), match=>{ 形参match就是正则匹配到的值，可以用来返回富文本 如 return `<span>${match}</span>` })
+// N4、String.prototype.replace(new RegExp(keyword, 'gi'), match=>{ 形参match就是正则匹配到的保留大小写格式的值，可以用来返回富文本 如 return `<span>${match}</span>` })

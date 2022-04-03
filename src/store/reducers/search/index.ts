@@ -19,6 +19,16 @@ const search = (state = initState, action: SearchActionType): SearchStateType =>
       }
     }
   }
+  if (action.type === 'search/clearSuggestion') {
+    return {
+      ...state,
+      suggestion: {
+        ...state.suggestion,
+        options: []
+      }
+
+    }
+  }
   return state
 }
 

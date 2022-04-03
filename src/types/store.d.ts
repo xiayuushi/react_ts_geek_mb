@@ -58,6 +58,8 @@ export type HomeActionType = {
 export type SearchActionType = {
   type: 'search/getSuggestion',
   response: SuggestionType
+} | {
+  type: 'search/clearSuggestion'
 }
 
 // 01、当前文件是store相关的类型声明集合
