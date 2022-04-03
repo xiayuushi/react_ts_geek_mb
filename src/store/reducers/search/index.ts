@@ -2,12 +2,14 @@ import { SearchActionType } from '@/types/store'
 import { SuggestionType } from '@/types/data'
 
 type SearchStateType = {
-  suggestion: SuggestionType
+  suggestion: SuggestionType,
+  historyRecordList: string[]
 }
 const initState: SearchStateType = {
   suggestion: {
     options: []
-  }
+  },
+  historyRecordList: []
 }
 const search = (state = initState, action: SearchActionType): SearchStateType => {
   if (action.type === 'search/getSuggestion') {
@@ -26,7 +28,12 @@ const search = (state = initState, action: SearchActionType): SearchStateType =>
         ...state.suggestion,
         options: []
       }
-
+    }
+  }
+  if (action.type === 'search/updateHistoryRecord') {
+    return {
+      ...state,
+      historyRecordList: action.payload
     }
   }
   return state

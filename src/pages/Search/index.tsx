@@ -6,7 +6,7 @@ import { useDebounceFn } from 'ahooks'
 
 import Icon from '@/components/Icon'
 import styles from './index.module.scss'
-import { getSuggestion, clearSuggestion } from '@/store/actions/search'
+import { getSuggestion, clearSuggestion, addHistoryRecord, clearHistoryRecord, delHistoryRecord } from '@/store/actions/search'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootStateType } from '@/types/store'
 
@@ -15,7 +15,7 @@ const SearchPage = () => {
   const dispatch = useDispatch()
   const [keyword, setKeyword] = useState('')
   const [isSuggestion, setIsSuggestion] = useState(false)
-  const { suggestion: { options } } = useSelector((state: RootStateType) => state.search)
+  const { suggestion: { options }, historyRecordList } = useSelector((state: RootStateType) => state.search)
 
   const { run, cancel } = useDebounceFn((keyword) => {
     dispatch(getSuggestion(keyword))
@@ -38,6 +38,11 @@ const SearchPage = () => {
     )
   }
 
+  const onSearch = (keyword: string) => {
+    console.log(keyword)
+    dispatch(addHistoryRecord(keyword))
+  }
+
   useEffect(() => {
     return () => {
       cancel()
@@ -50,7 +55,7 @@ const SearchPage = () => {
       <NavBar
         className="navbar"
         onBack={() => history.go(-1)}
-        right={<span className="search-text">搜索</span>}
+        right={<span className="search-text" onClick={() => onSearch(keyword)}>搜索</span>}
       >
         <SearchBar placeholder="请输入关键字搜索" onChange={onChange} />
       </NavBar>
@@ -64,17 +69,26 @@ const SearchPage = () => {
       >
         <div className="history-header">
           <span>搜索历史</span>
-          <span>
-            <Icon type="iconbtn_del" />
-              清除全部
-            </span>
+          {
+            historyRecordList.length !== 0 && (
+              <span onClick={() => dispatch(clearHistoryRecord())}>
+                <Icon type="iconbtn_del" />
+                清除全部
+              </span>
+            )
+          }
         </div>
 
         <div className="history-list">
-          <span className="history-item">
-            <span className="text-overflow">黑马程序员</span>
-            <Icon type="iconbtn_essay_close" />
-          </span>
+          {
+            historyRecordList.map((v, i) => (
+              <span className="history-item" key={i}>
+                <span className="text-overflow">{v}</span>
+                <Icon type="iconbtn_essay_close" onClick={() => dispatch(delHistoryRecord(v))} />
+              </span>
+            ))
+          }
+
         </div>
       </div>
 
@@ -82,7 +96,7 @@ const SearchPage = () => {
       <div className={classnames('search-result', isSuggestion ? 'show' : '')}>
         {
           options[0] !== null && options.map((v, i) => (
-            <div className="result-item" key={i}>
+            <div className="result-item" key={i} onClick={() => onSearch(v)}>
               <Icon className="icon-search" type="iconbtn_search" />
               <div className="result-value text-overflow" dangerouslySetInnerHTML={{ __html: keywordHighLight(v) }}>
               </div>

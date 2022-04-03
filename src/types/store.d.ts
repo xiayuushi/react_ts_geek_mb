@@ -60,6 +60,9 @@ export type SearchActionType = {
   response: SuggestionType
 } | {
   type: 'search/clearSuggestion'
+} | {
+  type: 'search/updateHistoryRecord',
+  payload: string[]
 }
 
 // 01、当前文件是store相关的类型声明集合
@@ -88,3 +91,7 @@ export type SearchActionType = {
 // N5、简言之，如果服务器返回的数据无需作为redux的状态，则无需定义action.type，也无需为aixos请求方法指定泛型
 // N6、如何快速定义接口返回的数据类型
 // N6、先发送一次请求，拿到数据后，在控制台复制返回的数据回到vscode中赋值给一个变量，将光标移入该变量，然后根据TS自动的类型推断复制vscode提示的类型即可
+// N7、将增加、删除、清空历史记录的action.type的名称统一定义为updateHistoryRecordList，且将payload定义为string[]，是为了省去一个个单独为添加、删除、清空定义type的麻烦
+// N7、因此关于文章搜索的历史记录的状态更改，只有一个action.type，就是updateHistoryRecordList，该type对应searchAction模块内的三个actionCreator分别定义具体的添加、删除、清空的逻辑
+// N7、即此处定义一个action.type为'search/updateHistoryRecord'，它对应一个reducer，而添加、删除、清空历史记录的三个actionCreator在内部已经处理好了历史记录交给同一个reducer即可
+// N7、如果不这么做，也可以定义多个action.type以及多个reducer去对应不同的具体的添加、删除、清空历史记录的actionCreator
