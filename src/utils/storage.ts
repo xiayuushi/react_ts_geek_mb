@@ -2,6 +2,7 @@ import { TokenDataType, ChannelType } from '@/types/data'
 
 export const TOKEN_KEY = 'REACT_TS_GEEK_MOBILE'
 export const CHANNELS_KEY = 'REACT_TS_GEEK_MOBILE_UNLOGINCHANNELS'
+export const SEARCHHISTORYRECORDLIST_KEY = 'REACT_TS_GEEK_MOBILE_SEARCHHISTORYRECORDLIST'
 
 export const getToken = (): TokenDataType => {
   return JSON.parse(localStorage.getItem(TOKEN_KEY) || '{}')
@@ -17,6 +18,7 @@ export const removeToken = (): void => {
 
 export const isLogin = (): boolean => !!getToken().token
 
+
 export const setLocalUnloginChannelsList = (unloginChannelsList: ChannelType[]): void => {
   localStorage.setItem(CHANNELS_KEY, JSON.stringify(unloginChannelsList))
 }
@@ -31,6 +33,15 @@ export const removeLocalUnloginChannelsList = (): void => {
 
 export const localHasUnloginChannelsList = () => {
   return !!getLocalUnloginChannelsList().length
+}
+
+
+export const setSearchHistoryRecordList = (list: string[]): void => {
+  localStorage.setItem(SEARCHHISTORYRECORDLIST_KEY, JSON.stringify(list))
+}
+
+export const getSearchHistoryRecordList = (): string[] => {
+  return JSON.parse(localStorage.getItem(SEARCHHISTORYRECORDLIST_KEY) || '[]')
 }
 
 

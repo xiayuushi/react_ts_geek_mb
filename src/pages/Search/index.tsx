@@ -17,18 +17,19 @@ const SearchPage = () => {
   const [isSuggestion, setIsSuggestion] = useState(false)
   const { suggestion: { options }, historyRecordList } = useSelector((state: RootStateType) => state.search)
 
-  const { run, cancel } = useDebounceFn((keyword) => {
+  const { run, cancel } = useDebounceFn(() => {
+    if (!keyword) return
     dispatch(getSuggestion(keyword))
   }, { wait: 2000 })
   const onChange = (e: string) => {
+    setKeyword(e)
     if (!e.trim()) {
       setIsSuggestion(false)
-      dispatch(clearSuggestion)
+      dispatch(clearSuggestion())
       return
     }
-    setKeyword(e)
     setIsSuggestion(true)
-    run(e)
+    run()
   }
 
   const keywordHighLight = (str: string) => {
@@ -40,6 +41,8 @@ const SearchPage = () => {
 
   const onSearch = (keyword: string) => {
     console.log(keyword)
+
+    setKeyword(keyword)
     dispatch(addHistoryRecord(keyword))
   }
 
@@ -57,7 +60,7 @@ const SearchPage = () => {
         onBack={() => history.go(-1)}
         right={<span className="search-text" onClick={() => onSearch(keyword)}>搜索</span>}
       >
-        <SearchBar placeholder="请输入关键字搜索" onChange={onChange} />
+        <SearchBar placeholder="请输入关键字搜索" value={keyword} onChange={onChange} />
       </NavBar>
 
       {/* 搜索历史（与下方搜索联系互斥显示） */}
@@ -102,6 +105,16 @@ const SearchPage = () => {
               </div>
             </div>
           ))
+        }
+        {
+          options[0] === null || options.length === 0 && (
+            <div className="result-item">
+              <Icon className="icon-search" type="iconbtn_search" />
+              <div className="result-value text-overflow">
+                暂无内容
+              </div>
+            </div>
+          )
         }
       </div>
     </div>
@@ -156,3 +169,4 @@ export default SearchPage
 // N3、如果是针对仅做渲染的DOM元素，则可以放心的使用，该属性的值是一个对象，注意对象内的__html属性是双下划线，__html的值就是需要解析的富文本
 // N3、例如:`<div dangerouslySetInnerHTML={{__html: 此处放入需要解析的富文本 }}></div>`
 // N4、String.prototype.replace(new RegExp(keyword, 'gi'), match=>{ 形参match就是正则匹配到的保留大小写格式的值，可以用来返回富文本 如 return `<span>${match}</span>` })
+// N5、useDebounceFn的回调中必须使用状态keyword来作为判断是否提交action的条件，如果是使用事件对象形参e，则在逐步删除搜索关键字的最后会额外多提交一次不必要的请求（因为形参对象不会有为空的情况）
