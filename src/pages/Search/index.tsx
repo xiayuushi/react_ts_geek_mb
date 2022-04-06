@@ -40,10 +40,10 @@ const SearchPage = () => {
   }
 
   const onSearch = (keyword: string) => {
-    console.log(keyword)
-
     setKeyword(keyword)
     dispatch(addHistoryRecord(keyword))
+
+    history.push(`/search/result?keyword=${keyword}`)
   }
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const SearchPage = () => {
         <div className="history-list">
           {
             historyRecordList.map((v, i) => (
-              <span className="history-item" key={i}>
+              <span className="history-item" key={i} onClick={() => onSearch(v)}>
                 <span className="text-overflow">{v}</span>
                 <Icon type="iconbtn_essay_close" onClick={() => dispatch(delHistoryRecord(v))} />
               </span>
@@ -105,16 +105,6 @@ const SearchPage = () => {
               </div>
             </div>
           ))
-        }
-        {
-          options[0] === null || options.length === 0 && (
-            <div className="result-item">
-              <Icon className="icon-search" type="iconbtn_search" />
-              <div className="result-value text-overflow">
-                暂无内容
-              </div>
-            </div>
-          )
         }
       </div>
     </div>
@@ -161,6 +151,23 @@ export default SearchPage
 // 05、使用正则表达式的构造函数写法，将搜索关键字（变量keyword）传入
 // 06、在react中并没有像vue那样的v-html指令，实现富文本的解析，但是react中DOM元素上有一个dangerouslySetInnerHTML属性可以实现类似的效果
 // 06、例如:`<div dangerouslySetInnerHTML={{__html: 此处放入需要解析的富文本 }}></div>`
+
+// history.push()传参的两种方式
+// 方式1：在url路径后面使用'?'的形式拼接参数，以下A1与A2任选一种即可，它们都能实现接参需求
+// 01、history.push(`/xxx?keyword=${keyword}`) 后续使用location.search.keyword进行接参
+// A1：let keyword = decodeURI(new URLSearchParams(location.search).get('keyword')!)
+// A2：let keyword = decodeURI(location.search.replace('?keyword=', ''))
+// n1、URLSearchParams()这个webapi用于获取url中'?'后面的那一段字符串，即可以获取到keyword=${keyword}这一段（该api不会解析完整的url地址，且会自动忽略掉起始字符串中的'?'）
+// n1、例如：consr res = URLSearchParams('?a=aaa&b=bbb') //通过res.a可以获取aaa 通过res.b可以获取bbb 
+// n1、例如：consr xxx = URLSearchParams(); xxx.append('c','ccc'); xxx.append('d','ddd') //此时xxx.toString()可以得到'c=ccc&d=ddd'的字符串
+// n2、如果地址栏url涉及到'+=&'等之类的特殊字符，可能会被浏览器进行encodeURI转码，导致出现类似'乱码'的内容，此时需要使用decodeURI()来将接收到的参数进行解码
+// n3、如果url的'?'后有多个连续的'='，如'/xxx?keyword=aaa==bbb'这种不规则的字符串，则使用URLSearchParams则可能无法准确获取到我们所需的参数'aaa==bbb'
+// n3、此时，可以不使用URLSearchParams，而是直接使用字符串repalce()来将'?keyword='给替换成空字符串，后续就是我们所需的参数
+// n4、以上提到的仅考虑了传递单个参数的情况
+// 方式2：使用state传参，state是一个对象，对象内部可以自定义键值对传参
+// 01、history.push('/xxx', {keyword}) 后续使用location.state.keyword接参
+// 02、使用location接收state传递过来的参数时，需要为useLocation指定泛型参数
+// 02、例如 const location = useLocation<{keyword: string}>(); location.state.keyword就是接收到的参数
 
 // N1、TS项目中使用定时器或者计时器必须使用window对象点出，否则其默认是NodeJs对象为定时器或者计时器的id指定类型时就会报错
 // N2、正则表达式：字面量写法简单但不适合传入变量，构造函数写法稍微繁琐但是适合传入变量

@@ -59,7 +59,7 @@ export type ArticleType = {
   aut_id: string,
   aut_name: string,
   comm_count: number,
-  pubdatepubdate: string,
+  pubdate: string,
   cover: { images?: string[], type: 0 | 1 | 3 }
 }
 
@@ -70,6 +70,25 @@ export type ArticleResType = {
 
 export type SuggestionType = {
   options: string[]
+}
+
+export type SearchResultType = {
+  title: string,
+  art_id: string,
+  aut_id: string,
+  pubdate: string,
+  aut_name: string,
+  comm_count: number,
+  like_count: number,
+  collect_count: number,
+  cover: { images?: string[], type: 0 | 1 | 3 }
+}
+
+export type SearchResultAllResType = {
+  page: number,
+  per_page: number,
+  total_count: number,
+  results: SearchResultType[]
 }
 
 // 01、当前文件用于存放除store之外的，会在多个组件中用到的数据的声明

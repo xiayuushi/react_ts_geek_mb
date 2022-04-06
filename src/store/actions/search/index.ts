@@ -1,6 +1,6 @@
 import request from "@utils/request"
-import { ApiResponseType, SuggestionType } from '@/types/data'
 import { RootThunkActionType, SearchActionType } from "@/types/store"
+import { ApiResponseType, SuggestionType, SearchResultAllResType } from '@/types/data'
 
 export const getSuggestion = (q: string): RootThunkActionType => {
   return async dispatch => {
@@ -47,6 +47,22 @@ export const clearHistoryRecord = (): SearchActionType => {
   return {
     type: 'search/updateHistoryRecord',
     payload: []
+  }
+}
+
+export const getSearchResult = (q: string, page = 1, per_page = 10): RootThunkActionType => {
+  return async dispatch => {
+    const res = await request.get<ApiResponseType<SearchResultAllResType>>('/search', {
+      params: {
+        q,
+        page,
+        per_page,
+      }
+    })
+    dispatch({
+      type: 'search/getSearchResult',
+      response: res.data.data
+    })
   }
 }
 

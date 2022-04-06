@@ -6,6 +6,7 @@ import ProfileEdit from './pages/Profile/Edit'
 import Chat from './pages/Profile/Chat'
 import Article from './pages/Article'
 import Search from './pages/Search'
+import SearchResult from './pages/Search/Result'
 import NotFound from './pages/NotFound'
 
 import { Router, Switch, Route, Redirect } from 'react-router-dom'
@@ -20,8 +21,9 @@ const App = () => {
           <Redirect exact from='/' to='/layout'></Redirect>
           <Route path='/login' component={Login}></Route>
           <Route path='/layout' component={Layout}></Route>
+          <Route path='/search' exact component={Search}></Route>
           <Route path='/article/:id' component={Article}></Route>
-          <Route path='/search' component={Search}></Route>
+          <Route path='/search/result' component={SearchResult}></Route>
 
           <AuthRoute1 path='/profile/edit'><ProfileEdit /></AuthRoute1>
           <AuthRoute2 path='/chat' component={Chat}></AuthRoute2>

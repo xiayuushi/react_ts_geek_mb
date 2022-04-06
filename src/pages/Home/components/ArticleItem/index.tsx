@@ -2,17 +2,17 @@ import React from 'react'
 import Icon from '@/components/Icon'
 import styles from './index.module.scss'
 import classnames from 'classnames'
-import { ArticleType } from '@/types/data'
+import { ArticleType, SearchResultType } from '@/types/data'
 import { isLogin } from '@/utils/storage'
 import dayjs from 'dayjs'
 import Img from '@components/Img'
 
 type Props = {
-  article: ArticleType
+  article: ArticleType | SearchResultType
 }
 
 const ArticleItem = ({ article }: Props) => {
-  const { aut_name, comm_count, title, pubdatepubdate, cover: { type, images } } = article
+  const { aut_name, comm_count, title, pubdate, cover: { type, images } } = article
   return (
     <div className={styles.root}>
       <div
@@ -39,7 +39,7 @@ const ArticleItem = ({ article }: Props) => {
       <div className={classnames('article-info', type === 0 && 'none-mt')}>
         <span>{aut_name}</span>
         <span>{comm_count} 评论</span>
-        <span>{dayjs(pubdatepubdate).fromNow()}</span>
+        <span>{dayjs(pubdate).fromNow()}</span>
         <span className="close">
           {
             isLogin() && (<Icon type="iconbtn_essay_close" />)

@@ -1,4 +1,4 @@
-import { TokenDataType, TokenType, ChannelType, ArticleResType, ArticleType, SuggestionType } from '@/types/data';
+import { TokenDataType, TokenType, ChannelType, ArticleResType, ArticleType, SuggestionType, SearchResultAllResType } from '@/types/data';
 import store from "@/store"
 import { ThunkAction } from 'redux-thunk'
 import { TokenDataType, UserType, UserProfileType, AddChannelResType } from "./data"
@@ -63,6 +63,9 @@ export type SearchActionType = {
 } | {
   type: 'search/updateHistoryRecord',
   payload: string[]
+} | {
+  type: 'search/getSearchResult',
+  response: SearchResultAllResType
 }
 
 // 01、当前文件是store相关的类型声明集合
