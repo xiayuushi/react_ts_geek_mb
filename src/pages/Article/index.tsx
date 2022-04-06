@@ -1,20 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styles from './index.module.scss'
-import { useDispatch, useSelector } from 'react-redux';
 import { getArticleDetail } from '@/store/actions/article';
 import { useParams } from 'react-router-dom';
-import { RootStateType } from '@/types/store';
 import dayjs from 'dayjs'
 import classNames from 'classnames'
+import useInitState from '@/hooks/useInitState';
 
 const Article = () => {
-  const dispatch = useDispatch()
   const params = useParams<{ id: string }>()
-  const { articleDetail } = useSelector((state: RootStateType) => state.article)
-
-  useEffect(() => {
-    dispatch(getArticleDetail(params.id))
-  }, [])
+  const { articleDetail } = useInitState(() => getArticleDetail(params.id), 'article')
 
   return (
     <div className={styles.root}>
