@@ -91,11 +91,29 @@ export type SearchResultAllResType = {
   results: SearchResultType[]
 }
 
+export type ArticleDetailType = {
+  art_id: string;
+  attitude: number;
+  aut_id: string;
+  aut_name: string;
+  aut_photo: string;
+  comm_count: number;
+  content: string;
+  is_collected: boolean;
+  is_followed: boolean;
+  like_count: number;
+  pubdate: string;
+  read_count: number;
+  title: string;
+}
+
 // 01、当前文件用于存放除store之外的，会在多个组件中用到的数据的声明
 // 02、ApiResponseType是根据axios内置的AxiosResponse类型封装而成的自定义响应类型
 // 02、因为当前接口返回的数据都有message以及data字段，为了在通过axios拿到数据使用时能够有属性提示（定义了几个字段，这几个字段就会有属性提示）
 // 02、光标移入axios方法返回数据时可看到axios自身内置的AxiosResponse类型，该类型接收泛型参数
 // 02、因此根据返回数据定义相应的数据字段类型，作为AxiosResponse类型的泛型参数传入，后续使用axios请求回来的数据时就有链式属性提示了
+// 03、快速定义服务器返回的数据字段类型的技巧
+// 03、先调用一次接口，复制接口的字段及字段值，然后丢到一个对象的变量中，可以通过TS类型推断快速得到该对象中各个字段的类型
 
 // 自定义axios请求方法的响应类型流程
 // st1、光标移入axios请求回来的数据上查看内置的AxiosResponse类型

@@ -34,7 +34,6 @@ const ArticleItem = ({ article }: Props) => {
                 </div>
               ))
             }
-
           </div>
         )}
       </div>
@@ -42,11 +41,7 @@ const ArticleItem = ({ article }: Props) => {
         <span>{aut_name}</span>
         <span>{comm_count} 评论</span>
         <span>{dayjs(pubdate).fromNow()}</span>
-        <span className="close">
-          {
-            isLogin() && (<Icon type="iconbtn_essay_close" />)
-          }
-        </span>
+        <span className="close">{isLogin() && (<Icon type="iconbtn_essay_close" />)}</span>
       </div>
     </div>
   )

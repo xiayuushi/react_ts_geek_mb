@@ -1,10 +1,24 @@
-import { TokenDataType, TokenType, ChannelType, ArticleResType, ArticleType, SuggestionType, SearchResultAllResType } from '@/types/data';
+import {
+  TokenDataType,
+  TokenType,
+  ChannelType,
+  ArticleResType,
+  ArticleType,
+  SuggestionType,
+  SearchResultAllResType,
+  ArticleDetailType
+} from '@/types/data'
 import store from "@/store"
 import { ThunkAction } from 'redux-thunk'
 import { TokenDataType, UserType, UserProfileType, AddChannelResType } from "./data"
 
 export type RootStateType = ReturnType<typeof store.getState>
-export type RootActionType = LoginActionType | ProfileActionType | HomeActionType | SearchActionType
+export type RootActionType =
+  | LoginActionType
+  | ProfileActionType
+  | HomeActionType
+  | SearchActionType
+  | ArticleDetailActionType
 export type RootThunkActionType = ThunkAction<void, RootStateType, any, RootActionType>
 
 export type LoginActionType = {
@@ -68,6 +82,11 @@ export type SearchActionType = {
   response: SearchResultAllResType
 } | {
   type: 'search/clearSearchResult'
+}
+
+export type ArticleDetailActionType = {
+  type: 'article/getArticleDetail',
+  response: ArticleDetailType
 }
 
 // 01、当前文件是store相关的类型声明集合
