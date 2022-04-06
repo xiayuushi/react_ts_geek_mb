@@ -6,15 +6,17 @@ import { ArticleType, SearchResultType } from '@/types/data'
 import { isLogin } from '@/utils/storage'
 import dayjs from 'dayjs'
 import Img from '@components/Img'
+import { useHistory } from 'react-router-dom'
 
 type Props = {
   article: ArticleType | SearchResultType
 }
 
 const ArticleItem = ({ article }: Props) => {
-  const { aut_name, comm_count, title, pubdate, cover: { type, images } } = article
+  const history = useHistory()
+  const { art_id, aut_name, comm_count, title, pubdate, cover: { type, images } } = article
   return (
-    <div className={styles.root}>
+    <div className={styles.root} onClick={() => history.push(`/article/${art_id}`)}>
       <div
         className={classnames(
           'article-content',

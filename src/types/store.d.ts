@@ -66,6 +66,8 @@ export type SearchActionType = {
 } | {
   type: 'search/getSearchResult',
   response: SearchResultAllResType
+} | {
+  type: 'search/clearSearchResult'
 }
 
 // 01、当前文件是store相关的类型声明集合

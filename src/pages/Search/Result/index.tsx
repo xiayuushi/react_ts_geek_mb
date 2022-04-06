@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { NavBar, InfiniteScroll } from 'antd-mobile'
 
 import styles from './index.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
-import { getSearchResult } from '@store/actions/search'
+import { getSearchResult, clearSearchResult } from '@store/actions/search'
 import { RootStateType } from '@/types/store'
 import ArticleItem from '@pages/Home/components/ArticleItem'
 
@@ -12,15 +12,23 @@ const Result = () => {
   const history = useHistory()
   const location = useLocation()
   const dispatch = useDispatch()
-  const { searchResults: { results = [] } } = useSelector((state: RootStateType) => state.search)
+  const [hasMore, setHasMore] = useState(true)
+  const { searchResults: { results = [], total_count = 0 } } = useSelector((state: RootStateType) => state.search)
   const urlParams = decodeURI(location.search.replace('?keyword=', ''))
 
   const page = useRef(1)
-  const hasMore = results.length < 100
+
   const loadMore = async () => {
     await dispatch(getSearchResult(urlParams, page.current))
     page.current = page.current + 1
+    setHasMore(results.length <= total_count)
   }
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearSearchResult())
+    }
+  }, [])
 
   return (
     <div className={styles.root}>
@@ -28,7 +36,7 @@ const Result = () => {
       <div className="article-list">
         {
           results.map((v, i) => (
-            <div className="article-item" key={i}>
+            <div className="article-item" key={i} >
               <ArticleItem article={v} />
             </div>
           ))
@@ -40,6 +48,11 @@ const Result = () => {
 }
 
 export default Result
+
+// 01、考虑到首页的文章ArticleList列表项ArticleItem与当前页的文章列表项ArticleItem是复用同一个组件，且都需要跳转到文章详情页
+// 01、因此在ArticleItem中注册点击事件跳转到文章详情页会比较合理，这样不必在首页文章列表项与当前页列表项都注册事件
+// 02、InfiniteScroll组件的hasMore属性尽量使用响应式数据，即用state状态来控制，且在loadMore逻辑中去判断它的状态
+// 03、返回上一页时应该销毁组件，且清理掉redux中的之前的文章搜索列表
 
 // history.push()传参的两种方式
 // 方式1：在url路径后面使用'?'的形式拼接参数，以下A1与A2任选一种即可，它们都能实现接参需求

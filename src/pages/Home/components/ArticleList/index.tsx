@@ -5,14 +5,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getArticleList, refreshArticleList } from '@store/actions/home'
 import { RootStateType } from '@/types/store'
 import { InfiniteScroll, PullToRefresh } from 'antd-mobile'
-import { useHistory } from 'react-router-dom'
 
 type PropsType = {
   channelId: number
 }
 
 const ArticleList = ({ channelId }: PropsType) => {
-  const history = useHistory()
   const dispatch = useDispatch()
   const { channelArticles } = useSelector((state: RootStateType) => state.home)
 
@@ -33,7 +31,7 @@ const ArticleList = ({ channelId }: PropsType) => {
         {
           channelArticles[channelId]?.articleList.map(v =>
             (
-              <div className="article-item" key={v.art_id} onClick={() => history.push(`/article/${v.art_id}`)}>
+              <div className="article-item" key={v.art_id}>
                 <ArticleItem article={v} />
               </div>
             ))

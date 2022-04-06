@@ -66,6 +66,12 @@ export const getSearchResult = (q: string, page = 1, per_page = 10): RootThunkAc
   }
 }
 
+export const clearSearchResult = (): SearchActionType => {
+  return {
+    type: 'search/clearSearchResult'
+  }
+}
+
 // addHistoryRecord进行数组去重、数组长度限制、数组内关键字提到数组前面的几种方式
 // 方式2比方式1更加简便，因为使用展开运算符时，可以直接将搜索关键字放到最前面，省去手动的unshift()插入到最前面
 

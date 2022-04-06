@@ -50,6 +50,15 @@ const search = (state = initState, action: SearchActionType): SearchStateType =>
       }
     }
   }
+  if (action.type === 'search/clearSearchResult') {
+    return {
+      ...state,
+      searchResults: {
+        ...state.searchResults,
+        results: []
+      }
+    }
+  }
   return state
 }
 
