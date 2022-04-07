@@ -4,7 +4,11 @@ import { useParams, useHistory } from 'react-router-dom'
 import useInitState from '@/hooks/useInitState'
 import { getArticleDetail } from '@/store/actions/article'
 import { NavBar } from 'antd-mobile'
+
+import NoComment from './components/NoComment'
+import CommentItem from './components/CommentItem'
 import Icon from '@components/Icon'
+import { InfiniteScroll } from 'antd-mobile'
 
 import dayjs from 'dayjs'
 import classNames from 'classnames'
@@ -51,6 +55,11 @@ const Article = () => {
     }
   }, [])
 
+  const hasMore = false
+  const loadMore = async () => {
+    await console.log('加载更多')
+  }
+
   return (
     <div className={styles.root}>
       <div className="root-wrapper">
@@ -74,7 +83,7 @@ const Article = () => {
           </div>
         )}
         </NavBar>
-        {/* 文章详情和评论 */}
+        {/* 文章详情 */}
         <div className="wrapper" ref={wrapperRef}>
           <div className="article-wrapper">
             <div className="header">
@@ -111,6 +120,24 @@ const Article = () => {
             </div>
           </div>
         </div>
+        {/* 评论 */}
+        <div className="comment">
+          <div className="comment-header" >
+            <span>全部评论（{}）</span>
+            <span>{} 点赞</span>
+          </div>
+
+          <div className="comment-list">
+
+            <NoComment></NoComment>
+
+            <CommentItem
+              type="normal"
+            />
+            <InfiniteScroll hasMore={hasMore} loadMore={loadMore} />
+          </div>
+        </div>
+
       </div>
     </div>
   );
