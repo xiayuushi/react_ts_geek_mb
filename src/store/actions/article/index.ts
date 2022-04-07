@@ -34,3 +34,18 @@ export const clearArticleComment = (): ArticleActionType => {
     type: 'article/clearArticleComment'
   }
 }
+
+export const isLikeArticle = (): RootThunkActionType => {
+  return async (dispatch, getState) => {
+    const { art_id, attitude } = getState().article.articleDetail
+    if (attitude !== 1) {
+      await request.post('/article/likings', { target: art_id })
+    } else {
+      await request.delete(`/article/likings/${art_id}`)
+    }
+    dispatch(getArticleDetail(art_id))
+  }
+}
+
+// 01、当attitude===1时是已经点赞状态；而attitude===0或者attitude===-1时，此时是非点赞状态
+// 01、因此将attitude！==1作为判断条件，当前非点赞状态，再次点击则为点击状态

@@ -30,10 +30,7 @@ const article = (state = initState, action: ArticleActionType): ArticleStateType
   if (action.type === 'article/clearArticleComment') {
     return {
       ...state,
-      articleComments: {
-        ...state.articleComments,
-        results: []
-      }
+      articleComments: {} as ArticleCommentResType
     }
   }
   return state

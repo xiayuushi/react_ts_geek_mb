@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Icon from '@/components/Icon'
 import styles from './index.module.scss'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { RootStateType } from '@/types/store'
+import { isLikeArticle } from '@/store/actions/article'
 
 type Props = {
   // normal 普通评论面板（评论+点赞+收藏+分享）
@@ -11,7 +12,9 @@ type Props = {
 }
 
 const CommentFooter = ({ type = 'normal' }: Props) => {
+  const dispatch = useDispatch()
   const { articleDetail, articleComments } = useSelector((state: RootStateType) => state.article)
+
   return (
     <div className={styles.root}>
       <div className="input-btn">
@@ -26,7 +29,7 @@ const CommentFooter = ({ type = 'normal' }: Props) => {
             <p>评论</p>
             {!!articleDetail.comm_count && <span className="bage">{articleDetail.comm_count}</span>}
           </div>
-          <div className="action-item">
+          <div className="action-item" onClick={() => dispatch(isLikeArticle())}>
             <Icon type={articleDetail.attitude === 1 ? 'iconbtn_like_sel' : 'iconbtn_like2'} />
             <p>点赞</p>
           </div>
@@ -38,7 +41,7 @@ const CommentFooter = ({ type = 'normal' }: Props) => {
       )}
 
       {type === 'reply' && (
-        <div className="action-item">
+        <div className="action-item" onClick={() => dispatch(isLikeArticle())}>
           <Icon type={articleDetail.attitude === 1 ? 'iconbtn_like_sel' : 'iconbtn_like2'} />
           <p>点赞</p>
         </div>
