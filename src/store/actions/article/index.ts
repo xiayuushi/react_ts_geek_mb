@@ -1,5 +1,5 @@
 import request from '@utils/request'
-import { ApiResponseType, ArticleDetailType } from '@/types/data'
+import { ApiResponseType, ArticleDetailType, ArticleCommentResType } from '@/types/data'
 import { RootThunkActionType } from '@/types/store'
 
 export const getArticleDetail = (id: string): RootThunkActionType => {
@@ -7,6 +7,23 @@ export const getArticleDetail = (id: string): RootThunkActionType => {
     const res = await request.get<ApiResponseType<ArticleDetailType>>(`/articles/${id}`)
     dispatch({
       type: 'article/getArticleDetail',
+      response: res.data.data
+    })
+  }
+}
+
+export const getArticleComment = (type: 'a' | 'c', source: string, offset?: string, limit?: number): RootThunkActionType => {
+  return async dispatch => {
+    const res = await request.get<ApiResponseType<ArticleCommentResType>>('/comments', {
+      params: {
+        type,
+        source,
+        offset,
+        limit
+      }
+    })
+    dispatch({
+      type: 'article/getArticleComment',
       response: res.data.data
     })
   }

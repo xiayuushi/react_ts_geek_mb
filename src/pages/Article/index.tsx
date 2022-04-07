@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import styles from './index.module.scss'
 import { useParams, useHistory } from 'react-router-dom'
 import useInitState from '@/hooks/useInitState'
-import { getArticleDetail } from '@/store/actions/article'
+import { getArticleDetail, getArticleComment } from '@/store/actions/article'
 import { NavBar } from 'antd-mobile'
 
 import NoComment from './components/NoComment'
@@ -15,11 +15,14 @@ import classNames from 'classnames'
 import DOMPurify from 'dompurify'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github-dark.css'
+import { useDispatch } from 'react-redux'
 
 const Article = () => {
   const history = useHistory()
+  const dispatch = useDispatch()
   const params = useParams<{ id: string }>()
   const { articleDetail } = useInitState(() => getArticleDetail(params.id), 'article')
+  const { articleComments } = useInitState(() => getArticleComment('a', params.id), 'article')
 
   // 顶部吸附效果
   const [isShowHeader, setIsShowHeader] = useState(false)
@@ -123,17 +126,15 @@ const Article = () => {
         {/* 评论 */}
         <div className="comment">
           <div className="comment-header" >
-            <span>全部评论（{}）</span>
-            <span>{} 点赞</span>
+            <span>全部评论（{articleComments.total_count}）</span>
+            <span>{articleDetail.like_count} 点赞</span>
           </div>
-
           <div className="comment-list">
-
-            <NoComment></NoComment>
-
-            <CommentItem
-              type="normal"
-            />
+            {
+              articleComments.total_count === 0
+                ? (<NoComment />)
+                : (articleComments.results?.map(v => (<CommentItem type="normal" comment={v} key={v.com_id} />)))
+            }
             <InfiniteScroll hasMore={hasMore} loadMore={loadMore} />
           </div>
         </div>

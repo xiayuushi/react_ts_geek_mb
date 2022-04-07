@@ -6,7 +6,8 @@ import {
   ArticleType,
   SuggestionType,
   SearchResultAllResType,
-  ArticleDetailType
+  ArticleDetailType,
+  ArticleCommentResType
 } from '@/types/data'
 import store from "@/store"
 import { ThunkAction } from 'redux-thunk'
@@ -87,6 +88,9 @@ export type SearchActionType = {
 export type ArticleDetailActionType = {
   type: 'article/getArticleDetail',
   response: ArticleDetailType
+} | {
+  type: 'article/getArticleComment',
+  response: ArticleCommentResType
 }
 
 // 01、当前文件是store相关的类型声明集合
