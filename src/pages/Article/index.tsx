@@ -15,14 +15,14 @@ import classNames from 'classnames'
 import DOMPurify from 'dompurify'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github-dark.css'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootStateType } from '@/types/store'
 
 const Article = () => {
   const history = useHistory()
   const dispatch = useDispatch()
   const params = useParams<{ id: string }>()
   const { articleDetail } = useInitState(() => getArticleDetail(params.id), 'article')
-  const { articleComments } = useInitState(() => getArticleComment('a', params.id), 'article')
 
   // 顶部吸附效果
   const [isShowHeader, setIsShowHeader] = useState(false)
@@ -58,9 +58,12 @@ const Article = () => {
     }
   }, [])
 
-  const hasMore = false
+  // 评论上拉加载更多
+  const [hasMore, setHasMore] = useState(true)
+  const { articleComments } = useSelector((state: RootStateType) => state.article)
   const loadMore = async () => {
-    await console.log('加载更多')
+    await dispatch(getArticleComment('a', params.id, articleComments?.last_id))
+    setHasMore(articleComments.last_id !== articleComments.end_id)
   }
 
   return (
@@ -158,6 +161,11 @@ export default Article
 // 09、highlight.js的安装及导入时都需要带上后面的'.js'后缀
 // 09、代码块标签通常都是 pre>code 标签，因此对富文本中的代码块使用highlight.js进行高亮显示需要先获取富文本中所有的code标签
 // 10、在处理逻辑时遇到TS报错类型不符，在不影响业务功能的情况下，可以考虑使用类型断言，将报错的数据进行符合类型的断言
+// 11、InfiniteScroll组件的hasMore属性尽量使用响应式数据，即用state状态来控制，首次为true（先让它加载一次）且在loadMore逻辑发送请求之后再去判断它的状态
+// 11、此处评论列表中的hasMore的判断条件是：当lase_id与end_id相同，说明此时评论加载完毕，则hasMore为false，无需继续开启loadMore发请求了
+// 12、redux中对state的数据采用不同的方式生成，则其在组件后续处理中也会有所不同
+// 12、A 如果redux中文章评论列表是对新旧数据进行拼接生成，那么在返回上一页时应该销毁组件，且置空redux中的之前的文章评论列表
+// 12、B 如果redux中文章评论列表是直接覆盖，并非进行拼接生成，那么则无需在销毁组件时置空redux中之前的文章评论列表
 
 // 顶部吸附效果的实现
 // 01、其实就是监听文章列表的滚动高度，让两个author盒子的交替显示与隐藏的切换效果，看起来就像是滚动到一定距离产生吸附到顶部的效果
