@@ -1,6 +1,6 @@
 import request from '@utils/request'
 import { ApiResponseType, ArticleDetailType, ArticleCommentResType } from '@/types/data'
-import { RootThunkActionType } from '@/types/store'
+import { RootThunkActionType, ArticleActionType } from '@/types/store'
 
 export const getArticleDetail = (id: string): RootThunkActionType => {
   return async dispatch => {
@@ -26,5 +26,11 @@ export const getArticleComment = (type: 'a' | 'c', source: string, offset?: stri
       type: 'article/getArticleComment',
       response: res.data.data
     })
+  }
+}
+
+export const clearArticleComment = (): ArticleActionType => {
+  return {
+    type: 'article/clearArticleComment'
   }
 }

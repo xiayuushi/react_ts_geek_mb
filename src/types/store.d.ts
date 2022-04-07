@@ -19,7 +19,7 @@ export type RootActionType =
   | ProfileActionType
   | HomeActionType
   | SearchActionType
-  | ArticleDetailActionType
+  | ArticleActionType
 export type RootThunkActionType = ThunkAction<void, RootStateType, any, RootActionType>
 
 export type LoginActionType = {
@@ -85,12 +85,14 @@ export type SearchActionType = {
   type: 'search/clearSearchResult'
 }
 
-export type ArticleDetailActionType = {
+export type ArticleActionType = {
   type: 'article/getArticleDetail',
   response: ArticleDetailType
 } | {
   type: 'article/getArticleComment',
   response: ArticleCommentResType
+} | {
+  type: 'article/clearArticleComment'
 }
 
 // 01、当前文件是store相关的类型声明集合

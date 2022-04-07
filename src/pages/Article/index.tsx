@@ -2,11 +2,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import styles from './index.module.scss'
 import { useParams, useHistory } from 'react-router-dom'
 import useInitState from '@/hooks/useInitState'
-import { getArticleDetail, getArticleComment } from '@/store/actions/article'
+import { getArticleDetail, getArticleComment, clearArticleComment } from '@/store/actions/article'
 import { NavBar } from 'antd-mobile'
 
 import NoComment from './components/NoComment'
 import CommentItem from './components/CommentItem'
+import CommentFooter from './components/CommentFooter'
 import Icon from '@components/Icon'
 import { InfiniteScroll } from 'antd-mobile'
 
@@ -60,16 +61,23 @@ const Article = () => {
 
   // 评论上拉加载更多
   const [hasMore, setHasMore] = useState(true)
-  const { articleComments } = useSelector((state: RootStateType) => state.article)
+  const { articleComments: { results = [], last_id, end_id } } = useSelector((state: RootStateType) => state.article)
   const loadMore = async () => {
-    await dispatch(getArticleComment('a', params.id, articleComments?.last_id))
-    setHasMore(articleComments.last_id !== articleComments.end_id)
+    await dispatch(getArticleComment('a', params.id, last_id))
+    setHasMore(last_id !== end_id)
   }
+  useEffect(() => {
+    return () => {
+      dispatch(clearArticleComment())
+    }
+  }, [])
 
   return (
     <div className={styles.root}>
+      {/* 页面视图容器 */}
       <div className="root-wrapper">
-        {/* 顶部导航（NavBar的内容与文章详情的author盒子结构是一样的，且NavBar的内容author默认是隐藏的用于做吸顶效果） */}
+        {/* 顶部导航 */}
+        {/*（NavBar的内容author盒子1 与文章详情的author盒子2 结构是一样的，且NavBar的内容author盒子1默认是隐藏的 用于做吸顶吸附错觉效果） */}
         <NavBar
           onBack={() => history.go(-1)}
           right={<span><Icon type="icongengduo" /></span>
@@ -89,6 +97,7 @@ const Article = () => {
           </div>
         )}
         </NavBar>
+
         {/* 文章详情 */}
         <div className="wrapper" ref={wrapperRef}>
           <div className="article-wrapper">
@@ -126,23 +135,29 @@ const Article = () => {
             </div>
           </div>
         </div>
-        {/* 评论 */}
+
+        {/* 文章评论 */}
         <div className="comment">
           <div className="comment-header" >
-            <span>全部评论（{articleComments.total_count}）</span>
+            <span>全部评论（{articleDetail.comm_count}）</span>
             <span>{articleDetail.like_count} 点赞</span>
           </div>
           <div className="comment-list">
             {
-              articleComments.total_count === 0
+              articleDetail.comm_count === 0
                 ? (<NoComment />)
-                : (articleComments.results?.map(v => (<CommentItem type="normal" comment={v} key={v.com_id} />)))
+                : (results.map(v => (<CommentItem type="normal" comment={v} key={v.com_id} />)))
             }
             <InfiniteScroll hasMore={hasMore} loadMore={loadMore} />
           </div>
         </div>
 
+        {/* 底部操作栏 */}
+        <CommentFooter />
       </div>
+
+      {/* 页面隐藏的弹出层 */}
+
     </div>
   );
 }
@@ -161,7 +176,8 @@ export default Article
 // 09、highlight.js的安装及导入时都需要带上后面的'.js'后缀
 // 09、代码块标签通常都是 pre>code 标签，因此对富文本中的代码块使用highlight.js进行高亮显示需要先获取富文本中所有的code标签
 // 10、在处理逻辑时遇到TS报错类型不符，在不影响业务功能的情况下，可以考虑使用类型断言，将报错的数据进行符合类型的断言
-// 11、InfiniteScroll组件的hasMore属性尽量使用响应式数据，即用state状态来控制，首次为true（先让它加载一次）且在loadMore逻辑发送请求之后再去判断它的状态
+// 11、InfiniteScroll组件的hasMore属性尽量使用响应式数据，即用state状态来控制，首次为true（先让它加载一次）且在loadMore逻辑发送请求之后再去判断它为false的状态
+// 11、因为loadMore发送请求之前redux是没有评论数据的，因此useSelector获取的articleComment一开始是没有数据的，因此需要解构出里面用到的数据赋初始值（results赋空数组）
 // 11、此处评论列表中的hasMore的判断条件是：当lase_id与end_id相同，说明此时评论加载完毕，则hasMore为false，无需继续开启loadMore发请求了
 // 12、redux中对state的数据采用不同的方式生成，则其在组件后续处理中也会有所不同
 // 12、A 如果redux中文章评论列表是对新旧数据进行拼接生成，那么在返回上一页时应该销毁组件，且置空redux中的之前的文章评论列表

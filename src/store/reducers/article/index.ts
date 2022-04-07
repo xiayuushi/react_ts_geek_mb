@@ -1,5 +1,5 @@
 import { ArticleDetailType, ArticleCommentResType } from '@/types/data'
-import { ArticleDetailActionType } from '@/types/store'
+import { ArticleActionType } from '@/types/store'
 
 type ArticleStateType = {
   articleDetail: ArticleDetailType,
@@ -10,7 +10,7 @@ const initState: ArticleStateType = {
   articleComments: {} as ArticleCommentResType
 }
 
-const article = (state = initState, action: ArticleDetailActionType): ArticleStateType => {
+const article = (state = initState, action: ArticleActionType): ArticleStateType => {
   if (action.type === 'article/getArticleDetail') {
     return {
       ...state,
@@ -18,9 +18,22 @@ const article = (state = initState, action: ArticleDetailActionType): ArticleSta
     }
   }
   if (action.type === 'article/getArticleComment') {
+    const oldResults = state.articleComments.results || []
     return {
       ...state,
-      articleComments: action.response
+      articleComments: {
+        ...state.articleComments,
+        results: [...oldResults, ...action.response.results]
+      }
+    }
+  }
+  if (action.type === 'article/clearArticleComment') {
+    return {
+      ...state,
+      articleComments: {
+        ...state.articleComments,
+        results: []
+      }
     }
   }
   return state
