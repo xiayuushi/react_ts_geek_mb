@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styles from './index.module.scss'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import useInitState from '@/hooks/useInitState'
 import { getArticleDetail } from '@/store/actions/article'
+import { NavBar } from 'antd-mobile'
+import Icon from '@components/Icon'
 
 import dayjs from 'dayjs'
 import classNames from 'classnames'
@@ -11,59 +13,101 @@ import hljs from 'highlight.js'
 import 'highlight.js/styles/github-dark.css'
 
 const Article = () => {
+  const history = useHistory()
   const params = useParams<{ id: string }>()
   const { articleDetail } = useInitState(() => getArticleDetail(params.id), 'article')
 
+  // 顶部吸附效果
+  const [isShowHeader, setIsShowHeader] = useState(false)
+  const authorRef = useRef<HTMLDivElement>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const scrollFn = () => {
+    const { top } = authorRef.current!.getBoundingClientRect()
+    top <= 0 ? setIsShowHeader(true) : setIsShowHeader(false)
+  }
+  useEffect(() => {
+    wrapperRef.current!.addEventListener('scroll', scrollFn)
+    return () => {
+      wrapperRef.current!.removeEventListener('scroll', scrollFn)
+    }
+  }, [])
+
+
+  // 富文本中'pre>code'标签的代码块高亮效果
   hljs.configure({
     //忽略未经过转义的html字符
     ignoreUnescapedHTML: true
   })
-  const eventListenerFn = () => {
+  const loadFn = () => {
     // 获取富文本中所有带有代码块的code标签并添加内置的主题类样式
     document.querySelectorAll('.dg-html pre code').forEach(
       el => hljs.highlightElement(el as HTMLElement)
     )
   }
   useEffect(() => {
-    document.addEventListener('load', eventListenerFn)
+    document.addEventListener('load', loadFn)
     return () => {
-      document.removeEventListener('load', eventListenerFn)
+      document.removeEventListener('load', loadFn)
     }
   }, [])
+
   return (
     <div className={styles.root}>
-      <div className="wrapper">
-        <div className="article-wrapper">
-          <div className="header">
-            <h1 className="title">{articleDetail.title}</h1>
-
-            <div className="info">
-              <span>{dayjs(articleDetail.pubdate).format('YYYY-MM-DD')}</span>
-              <span>{articleDetail.read_count} 阅读</span>
-              <span>{articleDetail.comm_count} 评论</span>
-            </div>
-
-            <div className="author">
-              <img src={articleDetail.aut_photo} alt="" />
-              <span className="name">{articleDetail.aut_name}</span>
-              <span
-                className={classNames(
-                  'follow',
-                  articleDetail.is_followed ? 'followed' : ''
-                )}
-              >
-                {articleDetail.is_followed ? '已关注' : '关注'}
-              </span>
-            </div>
+      <div className="root-wrapper">
+        {/* 顶部导航（NavBar的内容与文章详情的author盒子结构是一样的，且NavBar的内容author默认是隐藏的用于做吸顶效果） */}
+        <NavBar
+          onBack={() => history.go(-1)}
+          right={<span><Icon type="icongengduo" /></span>
+          }
+        > {isShowHeader && (
+          <div className="nav-author">
+            <img src={articleDetail.aut_photo} alt="" />
+            <span className="name">{articleDetail.aut_name}</span>
+            <span
+              className={classNames(
+                'follow',
+                articleDetail.is_followed ? 'followed' : ''
+              )}
+            >
+              {articleDetail.is_followed ? '已关注' : '关注'}
+            </span>
           </div>
+        )}
+        </NavBar>
+        {/* 文章详情和评论 */}
+        <div className="wrapper" ref={wrapperRef}>
+          <div className="article-wrapper">
+            <div className="header">
+              <h1 className="title">{articleDetail.title}</h1>
 
-          <div className="content">
-            <div
-              className="content-html dg-html"
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(articleDetail.content) }}
-            />
-            <div className="date">
-              发布文章时间：{dayjs(articleDetail.pubdate).format('YYYY-MM-DD')}
+              <div className="info">
+                <span>{dayjs(articleDetail.pubdate).format('YYYY-MM-DD')}</span>
+                <span>{articleDetail.read_count} 阅读</span>
+                <span>{articleDetail.comm_count} 评论</span>
+              </div>
+
+              <div className="author" ref={authorRef}>
+                <img src={articleDetail.aut_photo} alt="" />
+                <span className="name">{articleDetail.aut_name}</span>
+                <span
+                  className={classNames(
+                    'follow',
+                    articleDetail.is_followed ? 'followed' : ''
+                  )}
+                >
+                  {articleDetail.is_followed ? '已关注' : '关注'}
+                </span>
+              </div>
+            </div>
+
+            <div className="content">
+              <div
+                className="content-html dg-html"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(articleDetail.content) }}
+              />
+              <div className="date">
+                发布文章时间：{dayjs(articleDetail.pubdate).format('YYYY-MM-DD')}
+              </div>
             </div>
           </div>
         </div>
@@ -86,6 +130,22 @@ export default Article
 // 09、highlight.js的安装及导入时都需要带上后面的'.js'后缀
 // 09、代码块标签通常都是 pre>code 标签，因此对富文本中的代码块使用highlight.js进行高亮显示需要先获取富文本中所有的code标签
 // 10、在处理逻辑时遇到TS报错类型不符，在不影响业务功能的情况下，可以考虑使用类型断言，将报错的数据进行符合类型的断言
+
+// 顶部吸附效果的实现
+// 01、其实就是监听文章列表的滚动高度，让两个author盒子的交替显示与隐藏的切换效果，看起来就像是滚动到一定距离产生吸附到顶部的效果
+// 02、DOM元素.getBoundingClientRect()可以返回一个对象，该对象包含DOM元素与可见区视口位置信息
+// 02、即 { top, bottom, left, right, ... } = DOM.getBoundingClientRect()
+// 03、这些方位位置信息是相对距离，即调用该方法的DOM元素的四个边，与视口的左边或上边的相对距离
+// 04、NavBar的内容是author盒子，这个与文章列表盒子的其中一个子级元素author盒子结构上是相似的
+// 04、NavBar的内容author盒子默认情况下是隐藏的，当下方文章列表滚动时距离顶部为0或者负数时，就会让NavBar内容的那个author盒子出现
+// 04、以此来达到看起来是下方文章列表中的author产生了滚动吸附的错觉
+
+// 顶部吸附效果实现流程
+// 即,取两个DOM+1个方法+让默认隐藏的另一个盒子显示：滚动条元素DOM注册滚动事件、author盒子DOM通过getBoundingClientRect()获取顶部距离并判断该距离作为另一个隐藏的author盒子显示的依据
+// st1、给具有y轴滚动条的元素DOM注册滚动事件（即设置了overflow-y:auto样式的的盒子）
+// st2、获取下方author盒子距离可视区顶部的位置（author盒子DOM.getBoundingClientRect()获取）
+// st3、在滚动事件中监听author盒子距离可视区顶部的位置变化（当author盒子被隐藏时，让另一个默认隐藏且与author盒子结构类似的盒子显示）
+
 
 // dompurify使用流程
 // st1、安装dompurify及类型声明文件：yarn add dompurify @types/dompurify
