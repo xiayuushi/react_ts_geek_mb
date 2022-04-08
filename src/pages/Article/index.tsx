@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import styles from './index.module.scss'
 import { useParams, useHistory } from 'react-router-dom'
 import useInitState from '@/hooks/useInitState'
-import { getArticleDetail, getArticleComment, clearArticleComment } from '@/store/actions/article'
+import { getArticleDetail, getArticleComment, clearArticleComment, isFollowAuthor } from '@/store/actions/article'
 import { NavBar } from 'antd-mobile'
 
 import NoComment from './components/NoComment'
@@ -91,6 +91,7 @@ const Article = () => {
                 'follow',
                 articleDetail.is_followed ? 'followed' : ''
               )}
+              onClick={() => dispatch(isFollowAuthor())}
             >
               {articleDetail.is_followed ? '已关注' : '关注'}
             </span>
@@ -118,6 +119,7 @@ const Article = () => {
                     'follow',
                     articleDetail.is_followed ? 'followed' : ''
                   )}
+                  onClick={() => dispatch(isFollowAuthor())}
                 >
                   {articleDetail.is_followed ? '已关注' : '关注'}
                 </span>

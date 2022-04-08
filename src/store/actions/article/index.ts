@@ -59,5 +59,17 @@ export const isCollectArticle = (): RootThunkActionType => {
   }
 }
 
+export const isFollowAuthor = (): RootThunkActionType => {
+  return async (dispatch, getState) => {
+    const { aut_id, is_followed, art_id } = getState().article.articleDetail
+    if (is_followed) {
+      await request.delete(`/user/followings/${aut_id}`)
+    } else {
+      await request.post('/user/followings', { target: aut_id })
+    }
+    dispatch(getArticleDetail(art_id))
+  }
+}
+
 // 01、attitude有3个数值代表两种状态：值只有为1时才是点赞状态，其余值为-1或者0时为非点赞状态
 // 01、因此将attitude!==1作为判断条件，!==1表示当前为非点赞状态，此时调用post请求接口就是点赞，否则调用delete请求接口取消点赞。
