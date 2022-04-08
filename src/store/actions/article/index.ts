@@ -47,5 +47,17 @@ export const isLikeArticle = (): RootThunkActionType => {
   }
 }
 
-// 01、当attitude===1时是已经点赞状态；而attitude===0或者attitude===-1时，此时是非点赞状态
-// 01、因此将attitude！==1作为判断条件，当前非点赞状态，再次点击则为点击状态
+export const isCollectArticle = (): RootThunkActionType => {
+  return async (dispatch, getState) => {
+    const { art_id, is_collected } = getState().article.articleDetail
+    if (is_collected) {
+      await request.delete(`/article/collections/${art_id}`)
+    } else {
+      await request.post('/article/collections', { target: art_id })
+    }
+    dispatch(getArticleDetail(art_id))
+  }
+}
+
+// 01、attitude有3个数值代表两种状态：值只有为1时才是点赞状态，其余值为-1或者0时为非点赞状态
+// 01、因此将attitude!==1作为判断条件，!==1表示当前为非点赞状态，此时调用post请求接口就是点赞，否则调用delete请求接口取消点赞。

@@ -3,7 +3,7 @@ import Icon from '@/components/Icon'
 import styles from './index.module.scss'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootStateType } from '@/types/store'
-import { isLikeArticle } from '@/store/actions/article'
+import { isLikeArticle, isCollectArticle } from '@/store/actions/article'
 
 type Props = {
   // normal 普通评论面板（评论+点赞+收藏+分享）
@@ -33,7 +33,7 @@ const CommentFooter = ({ type = 'normal' }: Props) => {
             <Icon type={articleDetail.attitude === 1 ? 'iconbtn_like_sel' : 'iconbtn_like2'} />
             <p>点赞</p>
           </div>
-          <div className="action-item">
+          <div className="action-item" onClick={() => dispatch(isCollectArticle())}>
             <Icon type={articleDetail.is_collected ? 'iconbtn_collect_sel' : 'iconbtn_collect'} />
             <p>收藏</p>
           </div>
