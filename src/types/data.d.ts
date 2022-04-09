@@ -118,6 +118,7 @@ export type ArticleCommentType = {
   like_count: number;
   pubdate: string;
   reply_count: number;
+  is_top: number
 }
 
 export type ArticleCommentResType = {

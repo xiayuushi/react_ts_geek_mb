@@ -3,12 +3,14 @@ import styles from './index.module.scss'
 import { useParams, useHistory } from 'react-router-dom'
 import useInitState from '@/hooks/useInitState'
 import { getArticleDetail, getArticleComment, clearArticleComment, isFollowAuthor, commentsArticle } from '@/store/actions/article'
+import { newCommentType } from '@/types/data'
 import { NavBar, Popup } from 'antd-mobile'
 
 import NoComment from './components/NoComment'
 import CommentItem from './components/CommentItem'
 import CommentFooter from './components/CommentFooter'
 import CommentInput from './components/CommentInput'
+import CommentReply from './components/CommentReply'
 import Icon from '@components/Icon'
 import { InfiniteScroll } from 'antd-mobile'
 
@@ -94,11 +96,28 @@ const Article = () => {
   const hideCommentPopup = () => {
     setIsShowCommentPopup(false)
   }
-  const submitComment = async (comment: string) => {
-    console.log(comment)
-    if (!comment) return
-    await dispatch(commentsArticle(comment))
+  const submitComment = async (comcontent: string) => {
+    if (!comcontent) return
+    await dispatch(commentsArticle(comcontent))
     hideCommentPopup()
+  }
+
+  // 回复评论
+  const [isShowReplyPopup, setIsShowReplyPopup] = useState<{ visible: boolean, originComment: newCommentType }>({
+    visible: false,
+    originComment: {} as newCommentType
+  })
+  const showReplyPopup = (originComment: newCommentType) => {
+    setIsShowReplyPopup({
+      visible: true,
+      originComment
+    })
+  }
+  const hideReplyPopup = () => {
+    setIsShowReplyPopup({
+      visible: false,
+      originComment: {} as newCommentType
+    })
   }
 
   return (
@@ -175,7 +194,7 @@ const Article = () => {
               {
                 articleDetail.comm_count === 0
                   ? (<NoComment />)
-                  : (results.map(v => (<CommentItem type="normal" comment={v} key={v.com_id} />)))
+                  : (results.map(v => (<CommentItem type="normal" comment={v} key={v.com_id} showReplyPopup={showReplyPopup} />)))
               }
               <InfiniteScroll hasMore={hasMore} loadMore={loadMore} />
             </div>
@@ -186,9 +205,14 @@ const Article = () => {
         <CommentFooter btnCommentClick={btnCommentClick} inputCommentClick={inputCommentClick} />
       </div>
 
-      {/* 页面隐藏的弹出层 */}
+      {/* 页面隐藏的弹出层：文章评论弹出层 + 评论回复弹出层 */}
+      {/* 文章评论弹出层 */}
       <Popup visible={isShowCommentPopup} position="right" destroyOnClose>
         <CommentInput hideCommentPopup={hideCommentPopup} submitComment={submitComment}></CommentInput>
+      </Popup>
+      {/* 评论回复弹出层 */}
+      <Popup visible={isShowReplyPopup.visible} position='right' destroyOnClose>
+        <CommentReply hideReplyPopup={hideReplyPopup} originComment={isShowReplyPopup.originComment}></CommentReply>
       </Popup>
     </div>
   );
@@ -216,6 +240,7 @@ export default Article
 // 12、redux中对state的数据采用不同的方式生成，则其在组件后续处理中也会有所不同
 // 12、A 如果redux中文章评论列表是对新旧数据进行拼接生成，那么在返回上一页时应该销毁组件，且置空redux中的之前的文章评论列表
 // 12、B 如果redux中文章评论列表是直接覆盖，并非进行拼接生成，那么则无需在销毁组件时置空redux中之前的文章评论列表
+// 13、文章评论只需要文章id与文章内容，但是评论回复除了以上两个外还必须带上被回复的那个源评论，因此定义state时应该定义对象的形式
 
 // 顶部吸附效果的实现
 // 01、其实就是监听文章列表的滚动高度，让两个author盒子的交替显示与隐藏的切换效果，看起来就像是滚动到一定距离产生吸附到顶部的效果
@@ -250,4 +275,5 @@ export default Article
 
 // DOM元素.getBoundingClientRect()与DOM元素.offset的区别
 // 01、getBoundingClientRect()获取的是相对于可视区左或者上的相对距离
-// 02、offset是只读属性，可以用于获取的是相对于父元素的相对距离
+// 02、offset是只读属性，可以用于获取当前元素相对于有定位父元素的距离
+
