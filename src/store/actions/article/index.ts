@@ -1,5 +1,5 @@
 import request from '@utils/request'
-import { ApiResponseType, ArticleDetailType, ArticleCommentResType } from '@/types/data'
+import { ApiResponseType, ArticleDetailType, ArticleCommentResType, CommentArticleResType } from '@/types/data'
 import { RootThunkActionType, ArticleActionType } from '@/types/store'
 
 export const getArticleDetail = (id: string): RootThunkActionType => {
@@ -67,6 +67,21 @@ export const isFollowAuthor = (): RootThunkActionType => {
     } else {
       await request.post('/user/followings', { target: aut_id })
     }
+    dispatch(getArticleDetail(art_id))
+  }
+}
+
+export const commentsArticle = (content: string): RootThunkActionType => {
+  return async (dispatch, getState) => {
+    const { art_id } = getState().article.articleDetail
+    const res = await request.post<ApiResponseType<CommentArticleResType>>('/comments', {
+      target: art_id,
+      content
+    })
+    await dispatch({
+      type: 'article/commentArticle',
+      newComment: res.data.data.new_obj
+    })
     dispatch(getArticleDetail(art_id))
   }
 }

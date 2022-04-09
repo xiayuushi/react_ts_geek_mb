@@ -7,7 +7,8 @@ import {
   SuggestionType,
   SearchResultAllResType,
   ArticleDetailType,
-  ArticleCommentResType
+  ArticleCommentResType,
+  newCommentType
 } from '@/types/data'
 import store from "@/store"
 import { ThunkAction } from 'redux-thunk'
@@ -93,6 +94,9 @@ export type ArticleActionType = {
   response: ArticleCommentResType
 } | {
   type: 'article/clearArticleComment'
+} | {
+  type: 'article/commentArticle',
+  newComment: newCommentType
 }
 
 // 01、当前文件是store相关的类型声明集合

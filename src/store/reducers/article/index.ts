@@ -22,7 +22,7 @@ const article = (state = initState, action: ArticleActionType): ArticleStateType
     return {
       ...state,
       articleComments: {
-        ...state.articleComments,
+        ...action.response,
         results: [...oldResults, ...action.response.results]
       }
     }
@@ -31,6 +31,15 @@ const article = (state = initState, action: ArticleActionType): ArticleStateType
     return {
       ...state,
       articleComments: {} as ArticleCommentResType
+    }
+  }
+  if (action.type === 'article/commentArticle') {
+    return {
+      ...state,
+      articleComments: {
+        ...state.articleComments,
+        results: [action.newComment, ...state.articleComments.results]
+      }
     }
   }
   return state

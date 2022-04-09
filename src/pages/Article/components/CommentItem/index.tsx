@@ -53,7 +53,7 @@ const CommentItem = ({
             </span>
           )}
         </div>
-        <div className="comment-content">打破零评论</div>
+        <div className="comment-content">{comment.content}</div>
         <div className="comment-footer">
           {replyJSX}
           {/* 非评论的回复 */}

@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import styles from './index.module.scss'
 import { useParams, useHistory } from 'react-router-dom'
 import useInitState from '@/hooks/useInitState'
-import { getArticleDetail, getArticleComment, clearArticleComment, isFollowAuthor } from '@/store/actions/article'
-import { NavBar } from 'antd-mobile'
+import { getArticleDetail, getArticleComment, clearArticleComment, isFollowAuthor, commentsArticle } from '@/store/actions/article'
+import { NavBar, Popup } from 'antd-mobile'
 
 import NoComment from './components/NoComment'
 import CommentItem from './components/CommentItem'
 import CommentFooter from './components/CommentFooter'
+import CommentInput from './components/CommentInput'
 import Icon from '@components/Icon'
 import { InfiniteScroll } from 'antd-mobile'
 
@@ -72,6 +73,34 @@ const Article = () => {
     }
   }, [])
 
+  // 评论
+  const [isTop, setIsTop] = useState(true)
+  const [isShowCommentPopup, setIsShowCommentPopup] = useState(false)
+  const commentRef = useRef<HTMLDivElement>(null)
+  const btnCommentClick = () => {
+    if (isTop) {
+      wrapperRef.current!.scrollTo(0, commentRef.current!.offsetTop - 45)
+    } else {
+      wrapperRef.current!.scrollTo(0, 0)
+    }
+    setIsTop(!isTop)
+  }
+  const inputCommentClick = () => {
+    showCommentPopup()
+  }
+  const showCommentPopup = () => {
+    setIsShowCommentPopup(true)
+  }
+  const hideCommentPopup = () => {
+    setIsShowCommentPopup(false)
+  }
+  const submitComment = async (comment: string) => {
+    console.log(comment)
+    if (!comment) return
+    await dispatch(commentsArticle(comment))
+    hideCommentPopup()
+  }
+
   return (
     <div className={styles.root}>
       {/* 页面视图容器 */}
@@ -80,8 +109,7 @@ const Article = () => {
         {/*（NavBar的内容author盒子1 与文章详情的author盒子2 结构是一样的，且NavBar的内容author盒子1默认是隐藏的 用于做吸顶吸附错觉效果） */}
         <NavBar
           onBack={() => history.go(-1)}
-          right={<span><Icon type="icongengduo" /></span>
-          }
+          right={<span><Icon type="icongengduo" /></span>}
         > {isShowHeader && (
           <div className="nav-author">
             <img src={articleDetail.aut_photo} alt="" />
@@ -99,8 +127,9 @@ const Article = () => {
         )}
         </NavBar>
 
-        {/* 文章详情 */}
+        {/* 文章：详情+评论 */}
         <div className="wrapper" ref={wrapperRef}>
+          {/* 详情 */}
           <div className="article-wrapper">
             <div className="header">
               <h1 className="title">{articleDetail.title}</h1>
@@ -136,30 +165,31 @@ const Article = () => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* 文章评论 */}
-        <div className="comment">
-          <div className="comment-header" >
-            <span>全部评论（{articleDetail.comm_count}）</span>
-            <span>{articleDetail.like_count} 点赞</span>
-          </div>
-          <div className="comment-list">
-            {
-              articleDetail.comm_count === 0
-                ? (<NoComment />)
-                : (results.map(v => (<CommentItem type="normal" comment={v} key={v.com_id} />)))
-            }
-            <InfiniteScroll hasMore={hasMore} loadMore={loadMore} />
+          {/* 评论 */}
+          <div className="comment">
+            <div className="comment-header" ref={commentRef}>
+              <span>全部评论（{articleDetail.comm_count}）</span>
+              <span>{articleDetail.like_count} 点赞</span>
+            </div>
+            <div className="comment-list">
+              {
+                articleDetail.comm_count === 0
+                  ? (<NoComment />)
+                  : (results.map(v => (<CommentItem type="normal" comment={v} key={v.com_id} />)))
+              }
+              <InfiniteScroll hasMore={hasMore} loadMore={loadMore} />
+            </div>
           </div>
         </div>
 
         {/* 底部操作栏 */}
-        <CommentFooter />
+        <CommentFooter btnCommentClick={btnCommentClick} inputCommentClick={inputCommentClick} />
       </div>
 
       {/* 页面隐藏的弹出层 */}
-
+      <Popup visible={isShowCommentPopup} position="right" destroyOnClose>
+        <CommentInput hideCommentPopup={hideCommentPopup} submitComment={submitComment}></CommentInput>
+      </Popup>
     </div>
   );
 }
@@ -202,6 +232,9 @@ export default Article
 // st2、获取下方author盒子距离可视区顶部的位置（author盒子DOM.getBoundingClientRect()获取）
 // st3、在滚动事件中监听author盒子距离可视区顶部的位置变化（当author盒子被隐藏时，让另一个默认隐藏且与author盒子结构类似的盒子显示）
 
+// 滚动到指定位置 DOM元素.scrollTo(x,y)
+// 01、可以配合DOM元素的offsetTop属性做滚动到指定位置（offsetTop返回当前元素相对有定位的父级的顶部内边距离）
+// 01、例如：滚动的DOM元素.scrollTo(x, 某个参照物DOM元素.offsetTop)
 
 // dompurify使用流程
 // st1、安装dompurify及类型声明文件：yarn add dompurify @types/dompurify
@@ -214,3 +247,7 @@ export default Article
 // st2、在需要使用的组件中导入该插件以便后续调用其方法对code代码块进行高亮：import hljs fron 'highlight.js'
 // st3、在需要使用的组件中导入其主题，想要什么主题风格就导什么（主题是css样式文件，在依赖项目录的highlightjs插件的styles目录）：import 'highlight.js/styles/xxx.css'
 // st4、遍历富文本所在的父级容器，找出所有有代码块的标签'pre>code'，并调用插件的highlightElement()遍历添加上hljs内置的'.hljs'类名
+
+// DOM元素.getBoundingClientRect()与DOM元素.offset的区别
+// 01、getBoundingClientRect()获取的是相对于可视区左或者上的相对距离
+// 02、offset是只读属性，可以用于获取的是相对于父元素的相对距离
