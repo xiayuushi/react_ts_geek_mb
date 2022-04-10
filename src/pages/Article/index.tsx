@@ -237,6 +237,8 @@ export default Article
 // 11、此处评论列表中的hasMore的判断条件是：当lase_id与end_id相同，说明此时评论加载完毕，则hasMore为false，无需继续开启loadMore发请求了
 // 11、也可以再解构出total_count与results进行对比，两者相同，说明此时评论加载完毕，则hasMore为false，无需继续开启loadMore发请求了
 // 11、总之确保一开始hasMore为true，后续让其在loadMore的逻辑中持续判断，当hasMore为false时让loadMore停止发送请求
+// 11、InfiniteScroll组件（无限滚动）loadMore的逻辑可以参考src/Article/CommentReply/index.tsx，那个组件中数据是存放在组件内部中的，并不是是存放于redux中
+
 // 12、redux中对state的数据采用不同的方式生成，则其在组件后续处理中也会有所不同
 // 12、A 如果redux中文章评论列表是对新旧数据进行拼接生成，那么在返回上一页时应该销毁组件，且置空redux中的之前的文章评论列表
 // 12、B 如果redux中文章评论列表是直接覆盖，并非进行拼接生成，那么则无需在销毁组件时置空redux中之前的文章评论列表
