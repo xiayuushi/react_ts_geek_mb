@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { NavBar } from 'antd-mobile'
 import CommentFooter from '../CommentFooter'
 import NoComment from '../NoComment'
@@ -10,7 +10,7 @@ import { RootStateType } from '@/types/store'
 import request from '@utils/request'
 import { InfiniteScroll, Popup } from 'antd-mobile'
 import { useSelector, useDispatch } from 'react-redux'
-import { updateReplyCount } from '@/store/actions/article'
+import { updateReplyCount, getArticleComment } from '@/store/actions/article'
 
 type PropsType = {
   hideReplyPopup: () => void,
@@ -56,7 +56,7 @@ const CommentReply = ({ hideReplyPopup, originComment }: PropsType) => {
       ...reply,
       results: [res.data.data.new_obj, ...(reply.results || [])]
     })
-    dispatch(updateReplyCount(originComment.com_id))
+    await dispatch(updateReplyCount(originComment.com_id))
     hideCommentPopup()
   }
 
@@ -64,7 +64,7 @@ const CommentReply = ({ hideReplyPopup, originComment }: PropsType) => {
     <div className={styles.root}>
       <div className="reply-wrapper">
         {/* 顶部导航栏 */}
-        <NavBar className="transparent-navbar" onBack={hideReplyPopup}>
+        <NavBar className="transparent-navbar" onBack={hideReplyPopup} key="1">
           <div>{originComment.reply_count}条回复</div>
         </NavBar>
 
@@ -106,6 +106,7 @@ export default CommentReply
 // 05、用于渲染评论条数的originComment.reply_count是redux的数据（articleComments），而新添加的评论回复却是当前组件的状态（并未放到redux）中
 // 05、因此添加评论回复后评论数量不会随之增加，所以解决方式是在当前组件添加回复后，定义并调用新增回复数量的action将添加数量同步到redux中
 // N1、在实际项目中，尽量让同一模块的数据保持统一，要么全部放redux，要么全部放组件（推荐放redux中）
-// N1、不建议将redux数据拆分出来一部分放组件一部分放redux，否则用于渲染的数据可能无法同步更新（例如当前组件的回复评论数量）
-// N2、即使调用了updateReplyCount这个action对redux中用于渲染的回复数量进行更新，但是页面视图上的数量依旧未能更新成功
-// N2、观察redux开发者工具，可以看到redux中回复数量实际上是发生了更新的，之所以视图未能更新成功
+// N1、不建议将redux数据拆分出来一部分放于组件一部分放于redux，否则用于渲染的数据可能无法同步更新（例如当前组件的回复评论数量）
+// N2、当添加评论回复后，即使调用了updateReplyCount这个action对redux中用于渲染的回复数量进行更新，但是页面视图上的数量依旧未能更新成功
+// N2、观察redux开发者工具，可以看到redux中回复数量实际上是发生了更新的，之所以视图未能更新成功是因为CommentItem组件不会再次调用showReplyPopup()并将更新后的comment传递进去
+// N2、而只有手动打开回复面板才会触发CommentItem组件showReplyPopup()的调用！而该方法不调用则无法将最新的comment数据传递进去，页面视图就不会进行更新

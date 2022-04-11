@@ -38,7 +38,7 @@ const article = (state = initState, action: ArticleActionType): ArticleStateType
       ...state,
       articleComments: {
         ...state.articleComments,
-        results: [action.newComment, ...state.articleComments?.results]
+        results: [action.newComment, ...(state.articleComments?.results || [])]
       }
     }
   }

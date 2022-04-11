@@ -2,17 +2,18 @@ import React from 'react'
 import styles from './index.module.scss'
 import { TabBar } from 'antd-mobile'
 import Icon from '@components/Icon'
-import { useHistory, useLocation, Switch, Route } from 'react-router-dom'
+import { useHistory, useLocation, Switch, Route, Redirect } from 'react-router-dom'
 
 import Home from '@pages/Home'
 import Question from '@pages/Question'
 import Video from '@pages/Video'
 import Profile from '@pages/Profile'
 import { AuthRoute2 } from '@/components/AuthRoute'
+import KeepAlive from '@/components/KeepAlive'
 
 const Layout = () => {
   const tabs = [
-    { path: '/layout', title: '首页', icon: 'iconbtn_home' },
+    { path: '/layout/home', title: '首页', icon: 'iconbtn_home' },
     { path: '/layout/qa', title: '问答', icon: 'iconbtn_qa' },
     { path: '/layout/video', title: '视频', icon: 'iconbtn_video' },
     { path: '/layout/profile', title: '我的', icon: 'iconbtn_mine' },
@@ -26,10 +27,11 @@ const Layout = () => {
 
   return (
     <div className={styles['root']}>
+      <KeepAlive exact path="/layout/home" activePath="/layout/home"><Home /></KeepAlive>
       <Switch>
-        <Route exact path="/layout" component={Home}></Route>
         <Route path="/layout/qa" component={Question}></Route>
         <Route path="/layout/video" component={Video}></Route>
+        <Redirect exact from='/layout' to='/layout/home'></Redirect>
         <AuthRoute2 path="/layout/profile" component={Profile}></AuthRoute2>
       </Switch>
       <TabBar className='tab-bar' onChange={changeRoute} activeKey={location.pathname}>

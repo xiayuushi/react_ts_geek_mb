@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import dayjs from 'dayjs'
 import classnames from 'classnames'
 import Icon from '@/components/Icon'
@@ -26,6 +26,9 @@ const CommentItem = ({
     showReplyPopup && showReplyPopup(comment)
   }
 
+  useEffect(() => {
+    showReplyPopup && showReplyPopup(comment)
+  }, [comment])
   // 回复按钮
   const replyJSX =
     type === 'normal' ? (

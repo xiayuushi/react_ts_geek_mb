@@ -64,7 +64,7 @@ const Article = () => {
 
   // 评论上拉加载更多
   const [hasMore, setHasMore] = useState(true)
-  const { articleComments: { results = [], last_id, end_id } } = useSelector((state: RootStateType) => state.article)
+  const { articleComments: { results = [], last_id, end_id = null } } = useSelector((state: RootStateType) => state.article)
   const loadMore = async () => {
     await dispatch(getArticleComment('a', params.id, last_id))
     setHasMore(last_id !== end_id)
