@@ -38,7 +38,24 @@ const article = (state = initState, action: ArticleActionType): ArticleStateType
       ...state,
       articleComments: {
         ...state.articleComments,
-        results: [action.newComment, ...state.articleComments.results]
+        results: [action.newComment, ...state.articleComments?.results]
+      }
+    }
+  }
+  if (action.type === 'article/updateReplyCount') {
+    return {
+      ...state,
+      articleComments: {
+        ...state.articleComments,
+        results: state.articleComments.results?.map(v => {
+          if (v.com_id === action.commentId) {
+            return {
+              ...v,
+              reply_count: v.reply_count + 1
+            }
+          }
+          return v
+        })
       }
     }
   }

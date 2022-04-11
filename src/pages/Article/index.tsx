@@ -208,14 +208,14 @@ const Article = () => {
       {/* 页面隐藏的弹出层：文章评论弹出层 + 评论回复弹出层 */}
       {/* 文章评论弹出层 */}
       <Popup visible={isShowCommentPopup} position="right" destroyOnClose>
-        <CommentInput hideCommentPopup={hideCommentPopup} submitComment={submitComment}></CommentInput>
+        <CommentInput hideCommentPopup={hideCommentPopup} submitComment={submitComment} />
       </Popup>
       {/* 评论回复弹出层 */}
       <Popup visible={isShowReplyPopup.visible} position='right' destroyOnClose>
-        <CommentReply hideReplyPopup={hideReplyPopup} originComment={isShowReplyPopup.originComment}></CommentReply>
+        <CommentReply hideReplyPopup={hideReplyPopup} originComment={isShowReplyPopup.originComment} />
       </Popup>
     </div>
-  );
+  )
 }
 
 export default Article

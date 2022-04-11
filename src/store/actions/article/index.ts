@@ -86,5 +86,12 @@ export const commentsArticle = (content: string): RootThunkActionType => {
   }
 }
 
+export const updateReplyCount = (commentId: string): ArticleActionType => {
+  return {
+    type: 'article/updateReplyCount',
+    commentId: commentId
+  }
+}
+
 // 01、attitude有3个数值代表两种状态：值只有为1时才是点赞状态，其余值为-1或者0时为非点赞状态
 // 01、因此将attitude!==1作为判断条件，!==1表示当前为非点赞状态，此时调用post请求接口就是点赞，否则调用delete请求接口取消点赞。
