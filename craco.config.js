@@ -25,6 +25,17 @@ module.exports = {
       },
     },
   },
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://geek.itheima.net',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': '',
+        },
+      },
+    },
+  },
 }
 
 // create-react-app + ts 配置路径别名流程
