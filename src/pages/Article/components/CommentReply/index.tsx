@@ -110,3 +110,4 @@ export default CommentReply
 // N2、当添加评论回复后，即使调用了updateReplyCount这个action对redux中用于渲染的回复数量进行更新，但是页面视图上的数量依旧未能更新成功
 // N2、观察redux开发者工具，可以看到redux中回复数量实际上是发生了更新的，之所以视图未能更新成功是因为CommentItem组件不会再次调用showReplyPopup()并将更新后的comment传递进去
 // N2、而只有手动打开回复面板才会触发CommentItem组件showReplyPopup()的调用！而该方法不调用则无法将最新的comment数据传递进去，页面视图就不会进行更新
+// N2、即使在useEffect中做了补救但是效果不太理想，因此最好的方式是将回复的数据也放到redux中，即把当前组件中使用useState管理的与回复相关的数据该写成使用redux进行管理

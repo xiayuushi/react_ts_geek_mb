@@ -1,6 +1,6 @@
 const path = require('path')
-
 const px2vw = require('postcss-px-to-viewport')
+const px2vwConfig = px2vw({ viewportWidth: 375 })
 
 module.exports = {
   webpack: {
@@ -14,11 +14,17 @@ module.exports = {
       '@components': path.resolve(__dirname, 'src', 'components'),
     },
   },
-  // style: {
-  //   postcss: {
-  //     plugins: [px2vw({ viewportWidth: 375 })],
-  //   },
-  // },
+  style: {
+    postcss: {
+      mode: 'extends',
+      loaderOptions: {
+        postcssOptions: {
+          indent: 'postcss',
+          plugins: [px2vwConfig],
+        },
+      },
+    },
+  },
 }
 
 // create-react-app + ts 配置路径别名流程
@@ -36,8 +42,11 @@ module.exports = {
 // st1、安装`postcss-px-to-viewport`（指令：yarn add -D postcss-px-to-viewport）
 // st2、在craco.config.js中配置（因为react项目中配置webpack文件被隐藏，因此需要通过craco的配置文件去覆盖）
 // st2、const px2vw = require('postcss-px-to-viewport');
-// st2、module.exports = { style: { postcss: { plugins: [px2vw({viewportWidth: 375,})] }}}
+// st2A、module.exports = { style: { postcss: { plugins: [px2vwConfig] }}}
+// st2B、module.exports = { style: { postcss: { mode: 'extends', loaderOptions: {postcssOptions: {indent: 'postcss',plugins: [px2vwConfig] }}}}}
 // st3、后续书写CSS时直接使用px单位，px单位经过编译后会，会被转成适应视口的vw
 
 // N1、viewportWidth用于指定设计稿的宽度
 // N1、此处设置的是一倍图375宽度，测量1px就写1px会被`postcss-px-to-viewport`自动在编译后转成vw单位
+// N2、creact-react-app升级前，使用旧版本postcss的配置（即st2A）
+// N2、creact-react-app升级后，使用postcss8的配置（当前使用的postcss配置，即st2B）

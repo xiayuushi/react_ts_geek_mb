@@ -12,7 +12,6 @@ import NotFound from './pages/NotFound'
 import { Router, Switch, Route, Redirect } from 'react-router-dom'
 import history from '@utils/history'
 import { AuthRoute1, AuthRoute2 } from '@components/AuthRoute'
-import KeepAlive from '@components/KeepAlive'
 
 const App = () => {
   return (

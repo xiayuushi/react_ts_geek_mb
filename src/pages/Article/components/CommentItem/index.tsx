@@ -29,6 +29,7 @@ const CommentItem = ({
   useEffect(() => {
     showReplyPopup && showReplyPopup(comment)
   }, [comment])
+
   // 回复按钮
   const replyJSX =
     type === 'normal' ? (
